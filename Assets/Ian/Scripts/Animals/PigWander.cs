@@ -5,51 +5,54 @@ using UnityEngine;
 public class PigWander : MonoBehaviour
 {
     private float movementSpeed = 3;
-    private bool Free = true ; 
-    public float RotateSpeed = 2f; //privatize when speed set 
-    private bool turn= true  ;
-    void Start()
-    {
-
-
-        
-    }
+    private bool isFree = true;
+    public float minRotationAngle = 90.0f;
+    public float maxRotationAngle = 180.0f;
+    public float minWaitTime = 1.0f;
+    public float maxWaitTime = 5.0f;
+    private bool isRotating = false;
 
     void Update()
     {
-        if (Free == true)
+        if (isFree)
         {
             transform.Translate(Vector3.forward * movementSpeed * Time.deltaTime);
-            
-            if ( turn == true)
+
+            if (!isRotating)
             {
-                StartCoroutine(move());
+                StartCoroutine(RotateObject());
             }
-            
         }
+    }
+
+    public void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            
+            isFree = false;
+           
+        }
+         RotateRandomAngle();
+            
         
     }
-    public void OnCollisionEnter2D(Collision2D collision)
+
+    IEnumerator RotateObject()
     {
-        if ("Player" == collision.gameObject.tag)
-        {
-            Free = false;
+        isRotating = true;
+        yield return new WaitForSeconds(Random.Range(minWaitTime, maxWaitTime));
 
-        }
-        if ("PigsCanHit" == collision.gameObject.tag)
-        {
-            Quaternion targetRotation = Quaternion.Euler(0f, Random.Range(90, 180), 0f);
-            transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, RotateSpeed * Time.deltaTime);
+        RotateRandomAngle();
 
-        }
+        yield return new WaitForSeconds(Random.Range(minWaitTime, maxWaitTime));
+        isRotating = false;
     }
-    public IEnumerator move()
-    {
-      turn = false;
-      Quaternion targetRotation = Quaternion.Euler(0f, Random.Range(45, 180), 0f);
-      transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, RotateSpeed * Time.deltaTime);
-        yield return new WaitForSeconds(Random.Range(1, 5));
-        turn = true;
 
+    void RotateRandomAngle()
+    {
+        Quaternion currentRotation = transform.rotation;
+        Quaternion targetRotation = currentRotation * Quaternion.Euler(0f, Random.Range(minRotationAngle, maxRotationAngle), 0f);
+        transform.rotation = targetRotation;
     }
 }

@@ -18,7 +18,7 @@ public class Pingspawner : MonoBehaviour
     void Start()
     {
         MyPos = transform.position = this.transform.position;
-       for (int i = 0; 10 > i; i++)
+       for (int i = 0; 5 > i; i++)
        {
             StartCoroutine(NewPig());
 
