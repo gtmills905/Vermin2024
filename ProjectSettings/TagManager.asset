@@ -3,7 +3,17 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Target
+  - Ground
+  - Food
+  - Bullet
+  - Enemy
+  - Cow
+  - UI
+  - Pickup
+  - Pig
+  - Nest
   layers:
   - Default
   - TransparentFX
@@ -11,10 +21,10 @@ TagManager:
   - 
   - Water
   - UI
-  - 
-  - 
-  - 
-  - 
+  - Pickup
+  - Player 1
+  - Player 2
+  - Player 3
   - 
   - 
   - 

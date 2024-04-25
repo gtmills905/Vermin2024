@@ -4,5 +4,18 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
-  m_configObjects: {}
+  m_Scenes:
+  - enabled: 0
+    path: Assets/Vermin/Guy/Done/Scenes/MainMenu.unity
+    guid: 54879bda1ea580743b33084668244961
+  - enabled: 0
+    path: Assets/Vermin/Guy/Done/Scenes/Game.unity
+    guid: 0befba8a1e4eaea4c97cb0ed19992d4b
+  - enabled: 0
+    path: Assets/Vermin/Guy/Done/Scenes/WinScene.unity
+    guid: 82e6086339ceb1143916d7b4cf9e11f4
+  m_configObjects:
+    com.unity.adaptiveperformance.loader_settings: {fileID: 11400000, guid: f8cf7eda0cf2e964f823bbfb032d3ffa, type: 2}
+    com.unity.adaptiveperformance.simulator.provider_settings: {fileID: 11400000, guid: 5085974a52d39dc4c942daca8604d897, type: 2}
+    com.unity.input.settings: {fileID: 11400000, guid: 59cbf028949c0fc4ebf8244805c7e2cc, type: 2}
+    com.unity.xr.management.loader_settings: {fileID: 11400000, guid: 19c31cc606667254686e75a91398e2da, type: 2}
