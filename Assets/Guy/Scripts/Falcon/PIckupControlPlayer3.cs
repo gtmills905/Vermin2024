@@ -2,49 +2,46 @@ using UnityEngine;
 
 public class PickupControlPlayer3 : MonoBehaviour
 {
-    public Rigidbody CurrentObject;
-    public Transform PickupTarget;
-    public bool AnimalAttached = false;
+    public Transform pickupTarget; // This should be the attachment point on the bird
+    public bool animalAttached = false;
+
+    private Rigidbody currentObject;
 
     void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Food"))
         {
             // Check if an animal is not already attached
-            if (!AnimalAttached)
+            if (!animalAttached)
             {
                 // Get the Rigidbody of the collided object's parent
                 Rigidbody targetRigidbody = other.GetComponentInParent<Rigidbody>();
-                // Make sure the object has a Rigidbody
+
                 if (targetRigidbody != null)
                 {
-                    CurrentObject = targetRigidbody;
+                    currentObject = targetRigidbody;
+                    AttachToObject();
+                    animalAttached = true;
                 }
             }
         }
     }
 
-    void OnTriggerStay(Collider other)
+    void FixedUpdate()
     {
-        if (other.CompareTag("Food"))
+        // If an animal is attached, update its position to match the pickup target
+        if (animalAttached && currentObject != null)
         {
-            if (!AnimalAttached)
-            {
-                // Set the object's position to the pickup point
-                CurrentObject.MovePosition(PickupTarget.position);
-                AnimalAttached = true;
-            }
-            // If an animal is already attached, Ian you may want to add some feedback or interaction logic here
+            currentObject.MovePosition(pickupTarget.position);
         }
     }
 
-    void OnTriggerExit(Collider other)
+    void AttachToObject()
     {
-        if (other.CompareTag("Food"))
-        {
-            AnimalAttached = false;
-            CurrentObject = null;
-            // Reset any attached object references
-        }
+        // Set the object's position relative to the attachment point
+        currentObject.transform.position = pickupTarget.position;
+
+        // Attach the object to the bird without changing its position and rotation
+        currentObject.transform.SetParent(pickupTarget, false);
     }
 }

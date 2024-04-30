@@ -6,15 +6,20 @@ public class Player2 : MonoBehaviour
     private CharacterController controller;
     public float upanddownspeed = 20f;
     public float forwardspeed = 600.0f;
-    public float turnSpeed = 400.0f;
+    public float turnspeed = 400.0f;
     public float sensitivity = 5.0f;
+
+    public PickupControlPlayer2 pickupControl2;
+
+    // Maximum number of animals that can be carried
+    public int maxAnimalsCarried = 1;
+
+    // Current number of animals carried
+    private int currentAnimalsCarried = 0;
+
 
     public Transform birdHandleTransform; // Reference to the bird handle's transform
     public float maxHandleRotationAngle = 45f; // Maximum rotation angle of the bird handle
-
-    private GameObject attachmentPoint;
-    private GameObject currentTarget;
-    private bool isAttached;
 
     public enum PlayerCharacter
     {
@@ -30,10 +35,6 @@ public class Player2 : MonoBehaviour
     {
         controller = GetComponent<CharacterController>();
         anim = gameObject.GetComponentInChildren<Animator>();
-        isAttached = false;
-        attachmentPoint = new GameObject("AttachmentPoint");
-        attachmentPoint.transform.parent = transform;
-        attachmentPoint.transform.localPosition = new Vector3(0, 0.5f, 0);
     }
 
     void Update()
@@ -47,14 +48,14 @@ public class Player2 : MonoBehaviour
         float rightandleftHorizontal = rightHorizontal + characterHorizontal;
 
         // Calculate rotation based on right joystick input
-        Vector3 rotation = new Vector3(0, rightandleftHorizontal * turnSpeed * Time.deltaTime, 0);
+        Vector3 rotation = new Vector3(0, rightandleftHorizontal * turnspeed * Time.deltaTime, 0);
         transform.Rotate(rotation);
 
         // Movement based on left joystick
         Vector3 moveDirection = transform.forward * vertical * forwardspeed;
 
         // Turning based on left joystick
-        transform.Rotate(0, rightandleftHorizontal * turnSpeed * Time.deltaTime, 0);
+        transform.Rotate(0, rightandleftHorizontal * turnspeed * Time.deltaTime, 0);
 
         // Rotate bird handle forward when moving downward on the y-axis
         if (rightVertical < 0)
@@ -82,33 +83,29 @@ public class Player2 : MonoBehaviour
         {
             anim.SetInteger("AnimationPar", 0);
         }
+        AnimalsControlled();
     }
-
-
-    void TryAttach()
+    void AnimalsControlled()
     {
-        RaycastHit hit;
-        if (Physics.Raycast(transform.position, transform.forward, out hit, 3))
+        if (pickupControl2 != null && pickupControl2.animalAttached == true)
         {
-            if (hit.collider.CompareTag("Food"))
-            {
-                isAttached = true;
-                currentTarget = hit.collider.gameObject;
-                Debug.Log("Attaching Target");
-                currentTarget.transform.SetParent(attachmentPoint.transform);
-                currentTarget.transform.localPosition = Vector3.zero;
-            }
+            AdjustSpeeds();
         }
     }
 
-    public void Detach()
+    public void AdjustSpeeds()
     {
-        isAttached = false;
-        Debug.Log("Detaching Target");
-        if (currentTarget != null)
+        upanddownspeed = 300f;
+        forwardspeed = 14f;
+    }
+
+    // Reset carried animal count if the bird is destroyed
+    void OnDestroy()
+    {
+        if (this != null)
         {
-            currentTarget.transform.SetParent(null);
-            currentTarget = null;
+            currentAnimalsCarried = 0;
         }
     }
+
 }
