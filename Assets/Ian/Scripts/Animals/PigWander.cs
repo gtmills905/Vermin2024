@@ -11,6 +11,7 @@ public class PigWander : MonoBehaviour
     public float minWaitTime = 1.0f;
     public float maxWaitTime = 5.0f;
     private bool isRotating = false;
+    
 
     void Update()
     {
@@ -37,6 +38,27 @@ public class PigWander : MonoBehaviour
             
         
     }
+    void OnTriggerEnter(Collider other)
+    {
+
+
+
+        isFree = false;
+            Vector3 pigpos = transform.position;
+            Vector3 birdpos = other.transform.position;
+
+
+            Vector3 direction = pigpos - birdpos;
+        Quaternion targetRotation = Quaternion.LookRotation(-direction, Vector3.up);
+        transform.rotation = targetRotation;
+
+
+    }
+    void OnTriggerExit(Collider other)
+    {
+        isFree = true;
+    }
+    
 
     IEnumerator RotateObject()
     {
