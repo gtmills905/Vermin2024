@@ -1,3 +1,4 @@
+using System.Runtime.Serialization;
 using UnityEngine;
 
 public class PickupControlPlayer1 : MonoBehaviour
@@ -17,19 +18,28 @@ public class PickupControlPlayer1 : MonoBehaviour
                 // Get the Rigidbody of the collided object's parent
                 Rigidbody targetRigidbody = other.GetComponentInParent<Rigidbody>();
 
-                if (targetRigidbody != null)
-                {
-                    currentObject = targetRigidbody;
-                    AttachToObject();
-                    animalAttached = true;
-                }
+                currentObject = targetRigidbody;
+                AttachToObject();
+                animalAttached = true;
             }
+            else if(currentObject == null)
+            {
+                animalAttached = false;
+            }
+        }
+    }
+    void Update()
+    {
+        // Check if the attached object is null
+        if (animalAttached && currentObject == null)
+        {
+            animalAttached = false;
         }
     }
 
     void FixedUpdate()
     {
-        // If an animal is attached, update its position to match the pickup target
+        // If an animal is attached and the currentObject is not null, update its position to match the pickup target
         if (animalAttached && currentObject != null)
         {
             currentObject.MovePosition(pickupTarget.position);
@@ -38,10 +48,19 @@ public class PickupControlPlayer1 : MonoBehaviour
 
     void AttachToObject()
     {
-        // Set the object's position relative to the attachment point
-        currentObject.transform.position = pickupTarget.position;
+        // Check if currentObject is not null
+        if (currentObject != null)
+        {
+            // Set the object's position relative to the attachment point
+            currentObject.transform.position = pickupTarget.position;
 
-        // Attach the object to the bird without changing its position and rotation
-        currentObject.transform.SetParent(pickupTarget, false);
+            // Attach the object to the bird without changing its position and rotation
+            currentObject.transform.SetParent(pickupTarget, false);
+        }
+        else
+        {
+            Debug.LogError("currentObject is null! Cannot attach object.");
+        }
     }
+
 }

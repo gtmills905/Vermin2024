@@ -10,7 +10,7 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI farmerScoreText;
     public TextMeshProUGUI timerText;
 
-    private int birdScore = 0;
+    public int birdScore = 0;
     public int FarmerScore = 0;
 
     public DropOffSystem[] dropOffSystem;
@@ -78,7 +78,7 @@ public class GameManager : MonoBehaviour
     {
         for (int i = 0; i < dropOffSystem.Length; i++)
         {
-            dropOffSystem[i].totalCount = depositedAnimalCount;
+            dropOffSystem[i].gameManager.birdScore = depositedAnimalCount;
         }
         birdScore += points;
         UpdateScoreText();
