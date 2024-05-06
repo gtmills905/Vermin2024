@@ -4,20 +4,19 @@ using UnityEngine;
 
 public class HaveIBeenShot : MonoBehaviour
 {
-    public LivesCounter Manager;
+    public GameManager Manager;
     public GameObject spawn;
     // Start is called before the first frame update
     void Start()
     {
-        GameObject Object = GameObject.Find("GameManager"); 
-        Manager = Object.GetComponent<LivesCounter>(); 
+        Manager = FindObjectOfType<GameManager>();
     }
 
     public void OnCollisionEnter(Collision collision)
     {
         if ("Bullet" == collision.gameObject.tag)
         {
-            Manager.LivesLeft -= 1;
+            Manager.FarmerScore += 1;
             gameObject.SetActive(false);
             StartCoroutine(Respawn());
 
@@ -25,7 +24,7 @@ public class HaveIBeenShot : MonoBehaviour
     }
     public IEnumerator Respawn()
     {
-        new WaitForSeconds(60f);
+        new WaitForSeconds(30f);
         transform.position = spawn.transform.position;  
         gameObject.SetActive (true);
         yield return 0;
