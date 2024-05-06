@@ -1,50 +1,34 @@
 using UnityEngine;
-using UnityEngine.UI;
 
 public class Crosshair : MonoBehaviour
 {
-    // Reference to the image component of the crosshair
-    public Image crosshairImage;
+    // Variable to store the crosshair image
+    public Texture2D crosshairImage; // The image for the crosshair
+    public Camera targetCamera; // The camera to which the crosshair is attached
+    [Range(0.1f, 2.0f)] public float crosshairScale = 1.0f; // The scale of the crosshair
 
-    // Reference to the main camera
-    public Camera mainCamera;
-
-    void Start()
+    void OnGUI()
     {
-
-        // Get the main camera
-        mainCamera = Camera.main;
-
-        // Set the crosshair image to the center of the camera's view
-        SetCrosshairToCenter();
+        // Draw the crosshair image
+        DrawCrosshair();
     }
 
-    void Update()
+    void DrawCrosshair()
     {
-        // Update crosshair position every frame in case the camera moves
-        SetCrosshairToCenter();
-    }
-
-    void SetCrosshairToCenter()
-    {
-        // Get the center of the camera's view
-        Vector3 cameraCenter = new Vector3(Screen.width / 2f, Screen.height / 2f, 0);
-
-        // Convert the center of the camera's view from screen coordinates to world coordinates
-        Vector3 worldCenter = mainCamera.ScreenToWorldPoint(cameraCenter);
-
-        // Make sure the crosshair is visible within the camera's view
-        float distanceFromCamera = Vector3.Distance(mainCamera.transform.position, worldCenter);
-        Vector3 normalizedViewportCenter = mainCamera.WorldToViewportPoint(worldCenter);
-
-        // Check if the world center is within the camera's view
-        if (normalizedViewportCenter.x >= 0f && normalizedViewportCenter.x <= 1f &&
-            normalizedViewportCenter.y >= 0f && normalizedViewportCenter.y <= 1f &&
-            normalizedViewportCenter.z >= 0f && distanceFromCamera > 0f)
+        if (targetCamera == null)
         {
-            // Set the crosshair's position to the world center
-            crosshairImage.rectTransform.position = worldCenter;
-            crosshairImage.enabled = true; // Ensure the crosshair is enabled
+            Debug.LogWarning("Target camera not assigned for crosshair.");
+            return;
         }
+
+        // Calculate the position of the crosshair in screen coordinates
+        Vector3 screenPos = targetCamera.WorldToScreenPoint(targetCamera.transform.position + targetCamera.transform.forward * 10f);
+
+        // Calculate scaled width and height of the crosshair
+        float scaledWidth = crosshairImage.width * crosshairScale;
+        float scaledHeight = crosshairImage.height * crosshairScale;
+
+        // Draw the crosshair image at the calculated position with scaled size
+        GUI.DrawTexture(new Rect(screenPos.x - (scaledWidth / 2), Screen.height - screenPos.y - (scaledHeight / 2), scaledWidth, scaledHeight), crosshairImage);
     }
 }

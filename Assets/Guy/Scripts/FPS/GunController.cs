@@ -8,6 +8,9 @@ public class GunController : MonoBehaviour
     public AudioSource gunShotSoundAudioSource;
     public AudioClip gunShotSoundClip;
 
+    public AudioSource ReloadSoundAudioSource;
+    public AudioClip ReloadSoundClip;
+
     public float reloadTime = 5.0f;
     public Transform spawnPosition;
 
@@ -19,7 +22,7 @@ public class GunController : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetMouseButtonDown(0) && canShoot)
+        if (Input.GetAxis("RT_Player4") > 0.1f && canShoot)
         {
             Shoot();
             canShoot = false;
@@ -54,6 +57,10 @@ public class GunController : MonoBehaviour
 
     private void Reload()
     {
+        if (ReloadSoundAudioSource != null && ReloadSoundClip != null)
+        {
+            ReloadSoundAudioSource.PlayOneShot(ReloadSoundClip);
+        }
         canShoot = true;
     }
 }

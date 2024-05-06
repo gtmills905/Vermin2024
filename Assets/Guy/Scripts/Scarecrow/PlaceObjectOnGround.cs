@@ -31,8 +31,8 @@ public class PlaceObjectOnGround : MonoBehaviour
     // Function to get the aim direction from the player 4 controller
     Vector3 GetAimDirection()
     {
-        float horizontal = Input.GetAxis("RightJoystickHorizontal4");
-        float vertical = Input.GetAxis("RightJoystick4Vertica4l");
+        float horizontal = Input.GetAxis("RightJoystickHorizontalCharacter4");
+        float vertical = Input.GetAxis("RightJoystick4VerticalCharacter4");
         Vector3 direction = new Vector3(horizontal, 0f, vertical).normalized;
         return direction;
     }
