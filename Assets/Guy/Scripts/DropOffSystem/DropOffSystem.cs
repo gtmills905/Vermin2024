@@ -16,12 +16,12 @@ public class DropOffSystem : MonoBehaviour
             UniversalDepositObject();
             Debug.Log("Item deposited. Total count: " + gameManager.birdScore);
             Destroy(other.gameObject);
+            pigSpawnerUpdated.PigDestroyed();
         }
     }
 
     public void UniversalDepositObject()
     {
         gameManager.DepositObject(1);
-        pigSpawnerUpdated.PigDestroyed();
     }
 }
