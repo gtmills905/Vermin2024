@@ -5,6 +5,7 @@ using UnityEngine;
 public class HaveIBeenShot : MonoBehaviour
 {
     public LivesCounter Manager;
+    public GameObject spawn;
     // Start is called before the first frame update
     void Start()
     {
@@ -25,7 +26,7 @@ public class HaveIBeenShot : MonoBehaviour
     public IEnumerator Respawn()
     {
         new WaitForSeconds(60f);
-        transform.position = Vector3.zero;  
+        transform.position = spawn.transform.position;  
         gameObject.SetActive (true);
         yield return 0;
     }
