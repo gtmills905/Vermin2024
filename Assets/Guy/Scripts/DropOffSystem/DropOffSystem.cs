@@ -11,20 +11,15 @@ public class DropOffSystem : MonoBehaviour
     {
         if (other.CompareTag(targetTag))
         {
-            gameManager.birdScore++;
             audioSource.Play();
             UniversalDepositObject();
             Debug.Log("Item deposited. Total count: " + gameManager.birdScore);
-            if (other.CompareTag(targetTag) == true)
-            {
-                Destroy(other.gameObject);
-            }
+            Destroy(other.gameObject);
         }
     }
 
     public void UniversalDepositObject()
     {
         gameManager.DepositObject(1);
-
     }
 }

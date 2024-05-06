@@ -40,6 +40,8 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
+        UpdateScoreText();
+
         // Update timer
         if (timer > 0)
         {
@@ -72,17 +74,13 @@ public class GameManager : MonoBehaviour
         }
     }
 
-
     // Call this method when a bird deposits an object
     public void DepositObject(int points)
     {
-        for (int i = 0; i < dropOffSystem.Length; i++)
-        {
-            dropOffSystem[i].gameManager.birdScore = depositedAnimalCount;
-        }
         birdScore += points;
         UpdateScoreText();
     }
+
 
     // Call this method when the farmer kills a bird
     public void FarmerKill(int points)
