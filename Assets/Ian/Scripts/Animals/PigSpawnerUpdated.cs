@@ -1,58 +1,66 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
 public class PigSpawnerUpdated : MonoBehaviour
 {
-    public GameObject pigPrefab; // Reference to the pig prefab to be spawned
-    public GameObject[] spawnPoints; // Array of spawn point GameObjects
-    public float spawnInterval = 60f; // Interval between pig spawns in seconds
-    private int pigsSpawned = 0; // Number of pigs spawned in the current interval
-    private bool canSpawn = true; // Flag to control spawning
+    public bool CanSpawn = true;
+    public GameObject PigPrefab;
+    private Vector3 MyPos;
+    [SerializeField]
+    private int SpawnArea = 1;
+    private const int MaxInitialPigs = 7; // Changed to 7
+    private const int MaxTotalPigs = 10; // Changed to 10
+    private int currentPigCount = 0;
 
+    // Start is called before the first frame update
     void Start()
     {
-        // Start spawning coroutine
+        MyPos = transform.position;
+        SpawnInitialPigs();
         StartCoroutine(SpawnPigs());
+    }
+
+    void SpawnInitialPigs()
+    {
+        for (int i = 0; i < MaxInitialPigs; i++)
+        {
+            GameObject newPig = Instantiate(PigPrefab);
+            newPig.transform.position = new Vector3(MyPos.x + UnityEngine.Random.Range(0, SpawnArea), MyPos.y, MyPos.z + UnityEngine.Random.Range(0, SpawnArea));
+            currentPigCount++;
+        }
     }
 
     IEnumerator SpawnPigs()
     {
-        while (true)
+        while (currentPigCount < MaxTotalPigs)
         {
-            // Wait for spawn interval
-            yield return new WaitForSeconds(spawnInterval);
-
-            // Check if spawning is allowed and maximum number of pigs per interval is not exceeded
-            if (canSpawn && pigsSpawned < 2)
-            {
-                // Get a random spawn point from the spawnPoints array
-                GameObject spawnPoint = GetRandomSpawnPoint();
-
-                // Spawn a pig at the spawn point position
-                Instantiate(pigPrefab, spawnPoint.transform.position, Quaternion.identity);
-
-                // Increment the number of pigs spawned
-                pigsSpawned++;
-            }
+            SpawnNewPig();
+            yield return null; // wait for one frame before spawning next pig
         }
     }
 
-    // Get a random spawn point from the spawnPoints array
-    private GameObject GetRandomSpawnPoint()
+    void SpawnNewPig()
     {
-        // Generate a random index within the range of the spawnPoints array
-        int randomIndex = Random.Range(0, spawnPoints.Length);
-
-        // Return the GameObject at the random index
-        return spawnPoints[randomIndex];
+        if (CanSpawn)
+        {
+            GameObject newPig = Instantiate(PigPrefab);
+            newPig.transform.position = new Vector3(MyPos.x + UnityEngine.Random.Range(0, SpawnArea), MyPos.y, MyPos.z + UnityEngine.Random.Range(0, SpawnArea));
+            currentPigCount++;
+            StartCoroutine(DelayNextSpawn());
+            CanSpawn = false;
+        }
     }
 
-    // Reset the number of pigs spawned at the start of each interval
-    void Update()
+    IEnumerator DelayNextSpawn()
     {
-        if (Time.time % spawnInterval < Time.deltaTime)
-        {
-            pigsSpawned = 0;
-        }
+        yield return new WaitForSeconds(1.0f);
+        CanSpawn = true;
+    }
+
+    public void PigDestroyed()
+    {
+        currentPigCount--;
+        CanSpawn = true;
     }
 }

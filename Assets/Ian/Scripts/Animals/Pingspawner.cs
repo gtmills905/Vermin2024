@@ -40,8 +40,8 @@ public class Pingspawner : MonoBehaviour
         Pig = GameObject.Instantiate(Pig);
         Pig.transform.position = new Vector3 (MyPos.x + Random.Range(0, SpawnArea)  ,MyPos.y , MyPos.z+ Random.Range(0, SpawnArea));//spawns pig at position of sets by
         yield return new WaitForSeconds(1.0f);
-        
 
+        CanSpawn = true;
     }
 }
 

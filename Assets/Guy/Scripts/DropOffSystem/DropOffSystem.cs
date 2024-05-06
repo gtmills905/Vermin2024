@@ -6,6 +6,7 @@ public class DropOffSystem : MonoBehaviour
     public string targetTag = "Food";
     public AudioSource audioSource;
     public GameManager gameManager;
+    public PigSpawnerUpdated pigSpawnerUpdated;
 
     void OnTriggerEnter(Collider other)
     {
@@ -21,5 +22,6 @@ public class DropOffSystem : MonoBehaviour
     public void UniversalDepositObject()
     {
         gameManager.DepositObject(1);
+        pigSpawnerUpdated.PigDestroyed();
     }
 }
