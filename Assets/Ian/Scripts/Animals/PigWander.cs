@@ -41,17 +41,17 @@ public class PigWander : MonoBehaviour
     void OnTriggerEnter(Collider other)
     {
 
+        if (other.gameObject.tag == "Player")
+        { 
+            isFree = false;
+          Vector3 pigpos = transform.position;
+          Vector3 birdpos = other.transform.position;
 
 
-        isFree = false;
-            Vector3 pigpos = transform.position;
-            Vector3 birdpos = other.transform.position;
-
-
-            Vector3 direction = pigpos - birdpos;
-        Quaternion targetRotation = Quaternion.LookRotation(-direction, Vector3.up);
-        transform.rotation = targetRotation;
-
+          Vector3 direction = pigpos - birdpos;
+          Quaternion targetRotation = Quaternion.LookRotation(-direction, Vector3.up);
+          transform.rotation = targetRotation;
+        }
 
     }
     void OnTriggerExit(Collider other)
