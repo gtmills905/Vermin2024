@@ -33,7 +33,8 @@ public class PigWanderUpdated : MonoBehaviour
             Vector3 birdpos = other.transform.position;
             Vector3 direction = pigpos - birdpos;
             Quaternion targetRotation = Quaternion.LookRotation(-direction, Vector3.up);
-            transform.rotation = targetRotation;
+            // Apply rotation only to the Y-axis (around the vertical axis)
+            transform.rotation = Quaternion.Euler(0f, targetRotation.eulerAngles.y, 0f);
         }
         else if (other.gameObject.CompareTag("Obstacle"))
         {
@@ -60,8 +61,12 @@ public class PigWanderUpdated : MonoBehaviour
 
     void RotateRandomAngle()
     {
+        // Get current rotation
         Quaternion currentRotation = transform.rotation;
-        Quaternion targetRotation = currentRotation * Quaternion.Euler(0f, Random.Range(minRotationAngle, maxRotationAngle), 0f);
+        // Calculate random rotation around the Y-axis (vertical axis)
+        float randomAngle = Random.Range(minRotationAngle, maxRotationAngle);
+        Quaternion targetRotation = Quaternion.Euler(0f, currentRotation.eulerAngles.y + randomAngle, 0f);
+        // Apply the rotation
         transform.rotation = targetRotation;
     }
 }

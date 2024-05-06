@@ -91,6 +91,11 @@ public class Player1 : MonoBehaviour
         {
             AdjustSpeeds();
         }
+        else
+        {
+            upanddownspeed = 500f;
+            forwardspeed = 20f;
+        }
     }
 
     public void AdjustSpeeds()
