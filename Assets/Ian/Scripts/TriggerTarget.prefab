@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6854710293284195514}
   - component: {fileID: 9089804715771576606}
-  - component: {fileID: 8882843711440311292}
+  - component: {fileID: 5212682268382577763}
   m_Layer: 0
   m_Name: TriggerTarget
   m_TagString: Food
@@ -55,7 +55,7 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 1.0066901
   m_Center: {x: 3.6880955e-16, y: 0.5066911, z: 3.5366807e-16}
---- !u!114 &8882843711440311292
+--- !u!114 &5212682268382577763
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -64,7 +64,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 7419606002733031817}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3e74163c2f8f75440bb09cf928fe6333, type: 3}
+  m_Script: {fileID: 11500000, guid: 594ff491bc8c11744bdf454d676fc0a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   minRotationAngle: 90
@@ -203,7 +203,7 @@ MeshCollider:
     m_Bits: 0
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
-  m_ProvidesContacts: 0
+  m_ProvidesContacts: 1
   m_Enabled: 1
   serializedVersion: 5
   m_Convex: 1
