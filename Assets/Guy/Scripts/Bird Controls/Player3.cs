@@ -93,15 +93,15 @@ public class Player3 : MonoBehaviour
         }
         else
         {
-            upanddownspeed = 500f;
-            forwardspeed = 20f;
+            upanddownspeed = 300f;
+            forwardspeed = 14f;
         }
     }
 
     public void AdjustSpeeds()
     {
-        upanddownspeed = 300f;
-        forwardspeed = 14f;
+        upanddownspeed = 200f;
+        forwardspeed = 10f;
     }
 
     // Reset carried animal count if the bird is destroyed
