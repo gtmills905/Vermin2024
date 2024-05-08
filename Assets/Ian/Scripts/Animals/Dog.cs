@@ -5,14 +5,19 @@ using UnityEngine;
 public class Dog : MonoBehaviour
 {
     private bool Released;
-    public float detectionDistance = 10f;
+    public float detectionDistance = 20f;
     public float detectionAngle = 45f;
     public LayerMask detectionLayer;
+    Vector3 DogPos;
+    Vector3 birdPos;
+    public float jumpForce = 10f;
+    private Rigidbody rb;
+
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        rb = GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
@@ -28,15 +33,21 @@ public class Dog : MonoBehaviour
                 float angleToTarget = Vector3.Angle(transform.forward, directionToTarget);
                 if (angleToTarget <= detectionAngle / 2f)
                 {
-                   Vector3 DogPos = transform.position;
-                   Vector3 birdPos = hit.transform.position;
+                    DogPos = transform.position;
+                    birdPos = hit.transform.position;
                    Vector3 direction = birdPos - DogPos;
                    Quaternion targetRotation = Quaternion.LookRotation(direction, Vector3.up);
                    transform.rotation = targetRotation;
 
                 }
             }
+            if (( DogPos.x == birdPos.x)&& (DogPos.y == birdPos.y))
+            {
+                //jump
+                rb.AddForce(Vector3.up * jumpForce);
+            }
         }
+       
     }
 
     public void ReleaseDog()
