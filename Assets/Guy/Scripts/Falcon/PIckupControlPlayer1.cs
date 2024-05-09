@@ -54,8 +54,6 @@ public class PickupControlPlayer1 : MonoBehaviour
             // Set the object's position relative to the attachment point
             currentObject.transform.position = pickupTarget.position;
 
-            // Attach the object to the bird without changing its position and rotation
-            currentObject.transform.SetParent(pickupTarget, false);
         }
     }
 

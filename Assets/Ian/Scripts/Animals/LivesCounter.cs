@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 
 public class LivesCounter : MonoBehaviour
 {
-    public int LivesLeft;
+    public float LivesLeft;
     public TMP_Text currentLives;
 
 
