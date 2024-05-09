@@ -19,11 +19,20 @@ public class GunController : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetMouseButtonDown(0) && canShoot)
+        if (Input.GetAxis("RT_Player4") > 0)
         {
-            Shoot();
-            canShoot = false;
-            Invoke("Reload", reloadTime);
+            if (canShoot == true)
+            {
+                Shoot();
+                canShoot = false;
+
+                //insanstiate the ammo ui as a coroutine
+                Invoke("Reload", reloadTime);        
+                
+                    
+                
+            }
+            
         }
     }
 

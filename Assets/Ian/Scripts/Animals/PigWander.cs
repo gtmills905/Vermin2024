@@ -5,7 +5,9 @@ using UnityEngine;
 public class PigWander : MonoBehaviour
 {
     private float movementSpeed = 3;
-    private bool isFree = true;
+    
+        
+    public bool isFree = true;
     public float minRotationAngle = 90.0f;
     public float maxRotationAngle = 180.0f;
     public float minWaitTime = 1.0f;
@@ -38,21 +40,22 @@ public class PigWander : MonoBehaviour
             
         
     }
-    void OnTriggerEnter(Collider other)
+    public void OnTriggerEnter(Collider collider)
     {
+        if (collider.gameObject.CompareTag("Player"))
+        {
 
 
-
-        isFree = false;
+             isFree = false;
             Vector3 pigpos = transform.position;
-            Vector3 birdpos = other.transform.position;
+            Vector3 birdpos = collider.transform.position;
 
 
             Vector3 direction = pigpos - birdpos;
-        Quaternion targetRotation = Quaternion.LookRotation(-direction, Vector3.up);
-        transform.rotation = targetRotation;
+            Quaternion targetRotation = Quaternion.LookRotation(-direction, Vector3.up);
+            transform.rotation = targetRotation;
 
-
+        }
     }
     void OnTriggerExit(Collider other)
     {

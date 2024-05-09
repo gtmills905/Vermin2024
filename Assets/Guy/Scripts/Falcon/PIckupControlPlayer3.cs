@@ -3,7 +3,7 @@ using UnityEngine;
 public class PickupControlPlayer3 : MonoBehaviour
 {
     public Transform pickupTarget; // This should be the attachment point on the bird
-    public bool animalAttached = false;
+    public bool animalAttached3 = false;
 
     private Rigidbody currentObject;
 
@@ -12,7 +12,7 @@ public class PickupControlPlayer3 : MonoBehaviour
         if (other.CompareTag("Food"))
         {
             // Check if an animal is not already attached
-            if (!animalAttached)
+            if (!animalAttached3)
             {
                 // Get the Rigidbody of the collided object's parent
                 Rigidbody targetRigidbody = other.GetComponentInParent<Rigidbody>();
@@ -21,16 +21,23 @@ public class PickupControlPlayer3 : MonoBehaviour
                 {
                     currentObject = targetRigidbody;
                     AttachToObject();
-                    animalAttached = true;
+                    animalAttached3 = true;
                 }
             }
+        }
+    }
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Food"))
+        {
+            animalAttached3 = false;
         }
     }
 
     void FixedUpdate()
     {
         // If an animal is attached, update its position to match the pickup target
-        if (animalAttached && currentObject != null)
+        if (animalAttached3 && currentObject != null)
         {
             currentObject.MovePosition(pickupTarget.position);
         }

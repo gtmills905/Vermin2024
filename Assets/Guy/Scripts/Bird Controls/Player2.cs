@@ -87,7 +87,7 @@ public class Player2 : MonoBehaviour
     }
     void AnimalsControlled()
     {
-        if (pickupControl2 != null && pickupControl2.animalAttached == true)
+        if (pickupControl2 != null && pickupControl2.animalAttached2 == true)
         {
             AdjustSpeeds();
         }
@@ -104,8 +104,9 @@ public class Player2 : MonoBehaviour
     {
         if (this != null)
         {
+
             currentAnimalsCarried = 0;
+            pickupControl2.animalAttached2 = false;
         }
     }
-
 }

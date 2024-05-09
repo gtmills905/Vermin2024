@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class HaveIBeenShot : MonoBehaviour
 {
+    public AudioSource audioSource;
+    public GameObject particleEffect; // Assign the particle effect prefab in the Unity Editor
     public LivesCounter Manager;
     // Start is called before the first frame update
     void Start()
@@ -18,6 +20,9 @@ public class HaveIBeenShot : MonoBehaviour
         {
             Manager.LivesLeft -= 1;
             gameObject.SetActive(false);
+            Instantiate(particleEffect, collision.gameObject.transform.position, Quaternion.identity);
+            audioSource.Play();
+
             StartCoroutine(Respawn());
 
         }

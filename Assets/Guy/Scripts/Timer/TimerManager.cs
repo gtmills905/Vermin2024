@@ -59,11 +59,7 @@ public class TimeManager : MonoBehaviour
         PlayerPrefs.Save();
     }
 
-    public void LoadWinScene()
-    {
-        SaveLowestTime();
-        SceneManager.LoadScene("WinScene");
-    }
+   
 
     private string FormatTime(float time)
     {

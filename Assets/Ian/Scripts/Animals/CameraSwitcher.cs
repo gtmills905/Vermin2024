@@ -1,49 +1,47 @@
 using UnityEngine;
-using Cinemachine;
 
 public class CameraSwitcher : MonoBehaviour
 {
-    public CinemachineVirtualCamera firstCamera;
-    public CinemachineVirtualCamera secondCamera;
-    public GameObject objectToTrack; // The GameObject whose position you're tracking
+    public Camera firstCamera;
+    public Camera secondCamera;
 
-    private float lastYPosition;
-
-    void Start()
-    {
-        // Initialize the lastYPosition variable
-        lastYPosition = objectToTrack.transform.position.y;
-    }
+    private bool isSwitching = false; // Flag to track if a switch is in progress
 
     void Update()
     {
-        // Check if the object's y position has changed
-        if (objectToTrack.transform.position.y != lastYPosition)
+        if (Input.GetAxis("LT_Player4") > 0)
         {
-            // If the second camera is active, switch to the first camera; otherwise, switch to the second camera
-            if (secondCamera.Priority > 0)
+            // Only switch cameras if a switch is not already in progress
+            if (!isSwitching)
             {
-                SwitchToFirstCamera();
-            }
-            else
-            {
-                SwitchToSecondCamera();
+                isSwitching = true; // Set the flag to indicate a switch is in progress
+
+                // If the second camera is active, switch to the first camera; otherwise, switch to the second camera
+                if (secondCamera.depth > firstCamera.depth)
+                {
+                    SwitchToFirstCamera();
+                }
+                else
+                {
+                    SwitchToSecondCamera();
+                }
             }
         }
-
-        // Update the lastYPosition variable
-        lastYPosition = objectToTrack.transform.position.y;
+        else
+        {
+            isSwitching = false; // Reset the flag when the button is released
+        }
     }
 
     private void SwitchToSecondCamera()
     {
-        firstCamera.Priority = 0;
-        secondCamera.Priority = 10;
+        firstCamera.depth = 0; // Set the depth of the first camera to a lower value
+        secondCamera.depth = 1; // Set the depth of the second camera to a higher value
     }
 
     private void SwitchToFirstCamera()
     {
-        firstCamera.Priority = 10;
-        secondCamera.Priority = 0;
+        firstCamera.depth = 1; // Set the depth of the first camera to a higher value
+        secondCamera.depth = 0; // Set the depth of the second camera to a lower value
     }
 }

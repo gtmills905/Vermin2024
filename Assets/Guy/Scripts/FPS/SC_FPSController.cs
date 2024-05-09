@@ -15,6 +15,7 @@ public class SC_FPSController : MonoBehaviour
     public Transform rightArmPivot; // The pivot point around which the right arm rotates
     public float lookSpeed = 2.0f;
     public float lookXLimit = 45.0f;
+    private Animator anim;
 
 
     public enum PlayerCharacter
@@ -25,7 +26,7 @@ public class SC_FPSController : MonoBehaviour
         Character4
     }
 
-    public PlayerCharacter currentPlayerCharacter = PlayerCharacter.Character1;
+    public PlayerCharacter currentPlayerCharacter = PlayerCharacter.Character4;// should be 4
 
     CharacterController characterController;
     Vector3 moveDirection = Vector3.zero;
@@ -37,6 +38,7 @@ public class SC_FPSController : MonoBehaviour
     void Start()
     {
         characterController = GetComponent<CharacterController>();
+        anim = GetComponent<Animator>();
 
     }
 
@@ -47,8 +49,8 @@ public class SC_FPSController : MonoBehaviour
         Vector3 right = transform.TransformDirection(Vector3.right);
 
         // Input for Character 4 using right stick
-        float horizontalInput = Input.GetAxis("HorizontalCharacter4");
-        float verticalInput = Input.GetAxis("VerticalCharacter4");
+        float horizontalInput = Input.GetAxis("HorizontalCharacter4");//4
+        float verticalInput = Input.GetAxis("VerticalCharacter4");//4
         bool isSprinting = Input.GetKey(KeyCode.JoystickButton8); // L3 button
 
         float curSpeedX = canMove ? (isSprinting ? runningSpeed : walkingSpeed) * verticalInput : 0;
@@ -73,7 +75,7 @@ public class SC_FPSController : MonoBehaviour
 
         // Move the controller
         characterController.Move(moveDirection * Time.deltaTime);
-
+        anim.SetTrigger("walking");
         // Player and Camera rotation
         if (canMove)
         {
@@ -104,13 +106,17 @@ public class SC_FPSController : MonoBehaviour
 
     void RotatePlayerAndArms()
     {
-        float verticalRotation = Input.GetAxis("RightJoystickVerticalCharacter4") * lookSpeed;
-        float horizontalRotation = Input.GetAxis("RightJoystickHorizontalCharacter4") * lookSpeed;
+        float verticalRotation = Input.GetAxis("RightJoystickVerticalCharacter4") * lookSpeed;//4
+        float horizontalRotation = Input.GetAxis("RightJoystickHorizontalCharacter4") * lookSpeed;//4
 
         rotationX += verticalRotation;
         rotationX = Mathf.Clamp(rotationX, -lookXLimit, lookXLimit);
 
+        // Rotate the player horizontally
         transform.rotation *= Quaternion.Euler(0, horizontalRotation, 0);
+
+        // Rotate the player vertically
+        playerCamera.transform.Rotate(-verticalRotation, 0, 0);
 
         // Rotate only the left arm around its pivot point
         Vector3 leftArmRotation = leftArmPivot.localEulerAngles;
@@ -123,10 +129,11 @@ public class SC_FPSController : MonoBehaviour
         rightArmPivot.localEulerAngles = rightArmRotation;
     }
 
+
     void RotateWithRightStick()
     {
-        float horizontalRotation = Input.GetAxis("RightJoystickHorizontalCharacter4") * lookSpeed;
-        float verticalRotation = -Input.GetAxis("RightJoystickVerticalCharacter4") * lookSpeed;
+        float horizontalRotation = Input.GetAxis("RightJoystickHorizontalCharacter4") * lookSpeed;//4
+        float verticalRotation = -Input.GetAxis("RightJoystickVerticalCharacter4") * lookSpeed;//4
 
         rotationX += verticalRotation;
         rotationX = Mathf.Clamp(rotationX, -lookXLimit, lookXLimit);
