@@ -1,3 +1,4 @@
+using System.Runtime.Serialization;
 using UnityEngine;
 
 public class Player1 : MonoBehaviour
@@ -11,8 +12,12 @@ public class Player1 : MonoBehaviour
 
     public PickupControlPlayer1 pickupControl1;
 
+    public bool slowBirdsActive1;
     // Maximum number of animals that can be carried
     public int maxAnimalsCarried = 1;
+
+    public SlowBirds slowBirds;
+
 
     // Current number of animals carried
     private int currentAnimalsCarried = 0;
@@ -83,21 +88,42 @@ public class Player1 : MonoBehaviour
         {
             anim.SetInteger("AnimationPar", 0);
         }
-        AnimalsControlled();
+        if (Input.GetButtonDown("Place"))
+        {
+            slowBirds = FindObjectOfType<SlowBirds>();
+            if ((pickupControl1 != null && pickupControl1.animalAttached == true) || slowBirds.SlowingBirds1 == true)
+            {
+                AdjustSpeeds();
+            }
+            else
+            {
+                slowBirdsActive1 = false;
+                upanddownspeed = 300f;
+                forwardspeed = 14f;
+            }
+            AnimalsControlled();
+        }
     }
-    void AnimalsControlled()
+
+    public void AnimalsControlled()
     {
         if (pickupControl1 != null && pickupControl1.animalAttached == true)
         {
+            slowBirdsActive1 = true;
             AdjustSpeeds();
         }
         else
         {
+            slowBirdsActive1 = false;
             upanddownspeed = 300f;
             forwardspeed = 14f;
         }
     }
-
+    public void ResetSpeeds()
+    {
+        upanddownspeed = 300f;
+        forwardspeed = 14f;
+    }
     public void AdjustSpeeds()
     {
         upanddownspeed = 200f;

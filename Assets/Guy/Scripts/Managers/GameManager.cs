@@ -7,11 +7,11 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance; // Static instance field
 
     public TextMeshProUGUI birdScoreText;
-    public TextMeshProUGUI farmerScoreText;
+    public TextMeshProUGUI BirdLivesText;
     public TextMeshProUGUI timerText;
 
     public int birdScore = 0;
-    public int FarmerScore = 0;
+    public int BirdLives = 10;
 
     public DropOffSystem[] dropOffSystem;
 
@@ -48,30 +48,20 @@ public class GameManager : MonoBehaviour
             timer -= Time.deltaTime;
             UpdateTimerText();
 
-
-        }
-
-        else
-        {
             // If timer runs out (5 minutes elapsed), determine the winner
 
-            if (birdScore > FarmerScore)
+            if (birdScore > BirdLives)
             {
                 Debug.Log("Birds Win!");
                 // You can add more logic here, such as displaying a win screen or triggering other game events.
             }
-            else if (FarmerScore > birdScore)
+            else if (BirdLives <= 0)
             {
                 Debug.Log("Farmers Win!");
                 // You can add more logic here, such as displaying a win screen or triggering other game events.
             }
-            else
-            {
-                Debug.Log("It's a tie!");
-                // You can add more logic here for handling a tie scenario.
-            }
-
         }
+
     }
 
     // Call this method when a bird deposits an object
@@ -85,14 +75,14 @@ public class GameManager : MonoBehaviour
     // Call this method when the farmer kills a bird
     public void FarmerKill(int points)
     {
-        FarmerScore += points;
+        BirdLives -= points;
         UpdateScoreText();
     }
 
     void UpdateScoreText()
     {
         birdScoreText.text = "     Score: " + birdScore.ToString();
-        farmerScoreText.text = "Score: " + FarmerScore.ToString();
+        BirdLivesText.text = "Bird Lives " + BirdLives.ToString();
     }
 
     void UpdateTimerText()

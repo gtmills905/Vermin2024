@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 public class GunController : MonoBehaviour
 {
@@ -14,6 +15,9 @@ public class GunController : MonoBehaviour
     public float reloadTime = 5.0f;
     public Transform spawnPosition;
 
+    public GameObject uiAmmo;
+
+
     // Adjust these variables for the shotgun spread
     public int numberOfProjectiles = 10;
     public float coneSpreadAngle = 20f;
@@ -26,7 +30,8 @@ public class GunController : MonoBehaviour
         {
             Shoot();
             canShoot = false;
-            Invoke("Reload", reloadTime);
+            uiAmmo.SetActive(false);
+            StartCoroutine(ReloadAndEnableUI());
         }
     }
 
@@ -60,7 +65,26 @@ public class GunController : MonoBehaviour
         if (ReloadSoundAudioSource != null && ReloadSoundClip != null)
         {
             ReloadSoundAudioSource.PlayOneShot(ReloadSoundClip);
+
         }
+        canShoot = true;
+        
+    }
+    IEnumerator ReloadAndEnableUI()
+    {
+        if (ReloadSoundAudioSource != null && ReloadSoundClip != null)
+        {
+            ReloadSoundAudioSource.PlayOneShot(ReloadSoundClip);
+
+        }
+
+        // Wait for the reload time
+        yield return new WaitForSeconds(reloadTime);
+
+        // Reload is complete, enable UI ammo indicator
+        uiAmmo.SetActive(true);
+
+        // Allow shooting again
         canShoot = true;
     }
 }

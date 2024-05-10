@@ -11,6 +11,9 @@ public class Player3 : MonoBehaviour
 
     public PickupControlPlayer3 pickupControl3;
 
+    private SlowBirds slowBirds;
+    public bool slowBirdsActive3 = false;
+
     // Maximum number of animals that can be carried
     public int maxAnimalsCarried = 1;
 
@@ -83,26 +86,48 @@ public class Player3 : MonoBehaviour
         {
             anim.SetInteger("AnimationPar", 0);
         }
-        AnimalsControlled();
+        if (Input.GetButtonDown("Place"))
+        {
+            slowBirds = FindObjectOfType<SlowBirds>();
+            if ((pickupControl3 != null && pickupControl3.animalAttached == true) || slowBirds.SlowingBirds3 == true)
+            {
+                AdjustSpeeds();
+            }
+            else
+            {
+                slowBirdsActive3 = false;
+                upanddownspeed = 300f;
+                forwardspeed = 14f;
+            }
+            AnimalsControlled();
+        }
     }
-    void AnimalsControlled()
+
+    public void AnimalsControlled()
     {
         if (pickupControl3 != null && pickupControl3.animalAttached == true)
         {
+            slowBirdsActive3 = true;
             AdjustSpeeds();
         }
         else
         {
+            slowBirdsActive3 = false;
             upanddownspeed = 300f;
             forwardspeed = 14f;
         }
     }
-
+    public void ResetSpeeds()
+    {
+        upanddownspeed = 300f;
+        forwardspeed = 14f;
+    }
     public void AdjustSpeeds()
     {
         upanddownspeed = 200f;
         forwardspeed = 8f;
     }
+
 
     // Reset carried animal count if the bird is destroyed
     void OnDestroy()

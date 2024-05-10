@@ -1,4 +1,3 @@
-
 using UnityEngine;
 
 public class ProjectileController : MonoBehaviour
@@ -20,6 +19,15 @@ public class ProjectileController : MonoBehaviour
 
             // Set the rotation of the instantiated projectile to face the direction
             projectile.transform.rotation = Quaternion.LookRotation(direction, Vector3.up);
+
+            // Get all child rigidbodies of the instantiated projectile
+            Rigidbody[] childRigidbodies = projectile.GetComponentsInChildren<Rigidbody>();
+
+            // Apply the same velocity to each child Rigidbody
+            foreach (Rigidbody childRB in childRigidbodies)
+            {
+                childRB.velocity = direction * projectileSpeed;
+            }
 
             // Destroy the projectile after a delay
             Destroy(projectile, destroyDelay);

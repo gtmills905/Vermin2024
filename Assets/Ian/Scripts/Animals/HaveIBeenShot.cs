@@ -1,12 +1,11 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class HaveIBeenShot : MonoBehaviour
 {
     public GameManager Manager;
-    public GameObject spawn;
-    // Start is called before the first frame update
+    public RespawnManager respawnManager;
+    public GameObject impactVFXPrefab; // Assign the VFX prefab in the Inspector
+
     void Start()
     {
         Manager = FindObjectOfType<GameManager>();
@@ -14,19 +13,17 @@ public class HaveIBeenShot : MonoBehaviour
 
     public void OnCollisionEnter(Collision collision)
     {
-        if ("Bullet" == collision.gameObject.tag)
+        if (collision.gameObject.CompareTag("Bullet"))
         {
-            Manager.FarmerScore += 1;
-            gameObject.SetActive(false);
-            StartCoroutine(Respawn());
 
+            // Instantiate the impact VFX at the collision point
+            GameObject impactVFX = Instantiate(impactVFXPrefab, transform.position, Quaternion.identity);
+
+            // Destroy the VFX after 2 seconds
+            Destroy(impactVFX, 2f);
+
+            Manager.BirdLives -= 1;
+            respawnManager.RespawnPlayer();
         }
-    }
-    public IEnumerator Respawn()
-    {
-        new WaitForSeconds(30f);
-        transform.position = spawn.transform.position;  
-        gameObject.SetActive (true);
-        yield return 0;
     }
 }

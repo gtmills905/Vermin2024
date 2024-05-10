@@ -1,32 +1,70 @@
-using System.Collections;
-using System.Collections.Generic;
+
 using UnityEngine;
 
 public class SlowBirds : MonoBehaviour
 {
-    private void OnTriggerEnter(Collider other)
-    {
-        // Check if the collider has a tag called "Player"
-        if (other.CompareTag("Player"))
-        {
-            // Check if the collider has a component called Player1, Player2, or Player3
-            Player1 player1Component = other.GetComponent<Player1>();
-            Player2 player2Component = other.GetComponent<Player2>();
-            Player3 player3Component = other.GetComponent<Player3>();
+    public bool slowBirdsActive1 = true;
+    public bool slowBirdsActive2 = true;
+    public bool slowBirdsActive3 = true;
 
-            // If any of the components exist, call their AdjustSpeeds method
-            if (player1Component != null)
-            {
-                player1Component.AdjustSpeeds();
-            }
-            if (player2Component != null)
-            {
-                player2Component.AdjustSpeeds();
-            }
-            if (player3Component != null)
-            {
-                player3Component.AdjustSpeeds();
-            }
+    public bool SlowingBirds1 = false;
+    public bool SlowingBirds2 = false;
+    public bool SlowingBirds3 = false;
+
+    public Player1 player1Component;
+    public Player2 player2Component;
+    public Player3 player3Component;
+
+public void OnTriggerEnter(Collider other)
+{
+    if (other.CompareTag("Player"))
+    {
+        player1Component = other.transform.parent.parent.GetComponent<Player1>();
+        player2Component = other.transform.parent.parent.GetComponent<Player2>();
+        player3Component = other.transform.parent.parent.GetComponent<Player3>();
+
+        if (player1Component != null)
+        {
+            SlowingBirds1 = true;
+            player1Component.slowBirdsActive1 = true;
+            player1Component.AdjustSpeeds();
+        }
+        if (player2Component != null)
+        {
+            SlowingBirds2 = true;
+            player2Component.slowBirdsActive2 = true;
+            player2Component.AdjustSpeeds();
+        }
+        if (player3Component != null)
+        {
+            SlowingBirds3 = true;
+            player3Component.slowBirdsActive3 = true;
+            player3Component.AdjustSpeeds();
         }
     }
+}
+
+public void OnTriggerExit(Collider other)
+{
+    if (other.CompareTag("Player"))
+    {
+        if (player1Component != null && other.transform.parent.parent.GetComponent<Player1>() == player1Component)
+        {
+            SlowingBirds1 = false;
+            player1Component.ResetSpeeds();
+        }
+        if (player2Component != null && other.transform.parent.parent.GetComponent<Player2>() == player2Component)
+        {
+            SlowingBirds2 = false;
+            player2Component.ResetSpeeds();
+        }
+        if (player3Component != null && other.transform.parent.parent.GetComponent<Player3>() == player3Component)
+        {
+            SlowingBirds3 = false;
+            player3Component.ResetSpeeds();
+        }
+    }
+}
+
+
 }

@@ -29,12 +29,8 @@ public class BulletCollision : MonoBehaviour
                 }
             }
 
-
-            // Respawn the player target after 5 seconds
-            Invoke("RespawnTarget", 5f);
-
             // Add a point to the farmer's score
-            gameManager.FarmerScore += 1; // Assuming you have a public property for farmer score in GameManager
+            gameManager.BirdLives -= 1; // Assuming you have a public property for farmer score in GameManager
         }
     }
 
