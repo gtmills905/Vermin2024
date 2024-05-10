@@ -57,10 +57,6 @@ public class PickupControlPlayer3 : MonoBehaviour
             // Attach the object to the bird without changing its position and rotation
             currentObject.transform.SetParent(pickupTarget, false);
         }
-        else
-        {
-            Debug.LogError("currentObject is null! Cannot attach object.");
-        }
     }
 
 }

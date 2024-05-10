@@ -7,7 +7,7 @@ public class BoundingBox : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             // Prevent the player from moving further
-            Rigidbody playerRigidbody = other.GetComponent<Rigidbody>();
+            Rigidbody playerRigidbody = other.transform.root.GetComponent<Rigidbody>();
             playerRigidbody.velocity = Vector3.zero;
         }
     }

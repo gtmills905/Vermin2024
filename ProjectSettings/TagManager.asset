@@ -15,6 +15,7 @@ TagManager:
   - Pig
   - Nest
   - Obstacle
+  - Farmer
   layers:
   - Default
   - TransparentFX

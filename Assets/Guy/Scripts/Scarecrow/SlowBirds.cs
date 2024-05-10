@@ -19,15 +19,17 @@ public void OnTriggerEnter(Collider other)
 {
     if (other.CompareTag("Player"))
     {
-        player1Component = other.transform.parent.parent.GetComponent<Player1>();
-        player2Component = other.transform.parent.parent.GetComponent<Player2>();
-        player3Component = other.transform.parent.parent.GetComponent<Player3>();
+        Debug.Log(other.name);
+        other.transform.TryGetComponent<Player1>(out player1Component);
+        other.transform.TryGetComponent<Player2>(out player2Component);
+        other.transform.TryGetComponent<Player3>(out player3Component);
 
-        if (player1Component != null)
+            if (player1Component != null)
         {
             SlowingBirds1 = true;
             player1Component.slowBirdsActive1 = true;
             player1Component.AdjustSpeeds();
+
         }
         if (player2Component != null)
         {
@@ -48,20 +50,23 @@ public void OnTriggerExit(Collider other)
 {
     if (other.CompareTag("Player"))
     {
-        if (player1Component != null && other.transform.parent.parent.GetComponent<Player1>() == player1Component)
+        if (player1Component != null)
         {
             SlowingBirds1 = false;
             player1Component.ResetSpeeds();
-        }
-        if (player2Component != null && other.transform.parent.parent.GetComponent<Player2>() == player2Component)
+                player1Component = null;
+            }
+        if (player2Component != null)
         {
             SlowingBirds2 = false;
             player2Component.ResetSpeeds();
-        }
-        if (player3Component != null && other.transform.parent.parent.GetComponent<Player3>() == player3Component)
+                player2Component = null;
+            }
+        if (player3Component != null)
         {
             SlowingBirds3 = false;
             player3Component.ResetSpeeds();
+                player3Component = null;
         }
     }
 }
