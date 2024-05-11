@@ -9,7 +9,7 @@ public class Player2 : MonoBehaviour
     public float turnspeed = 400.0f;
     public float sensitivity = 5.0f;
 
-    public PickupControlPlayer2 pickupControl2;
+    public PickupControl pickupControl;
 
     private SlowBirds slowBirds;
     public bool slowBirdsActive2 = false;
@@ -17,10 +17,6 @@ public class Player2 : MonoBehaviour
 
     // Maximum number of animals that can be carried
     public int maxAnimalsCarried = 1;
-
-    // Current number of animals carried
-    private int currentAnimalsCarried = 0;
-
 
     public Transform birdHandleTransform; // Reference to the bird handle's transform
     public float maxHandleRotationAngle = 45f; // Maximum rotation angle of the bird handle
@@ -87,36 +83,37 @@ public class Player2 : MonoBehaviour
         {
             anim.SetInteger("AnimationPar", 0);
         }
-        
+
         if (Input.GetButtonDown("Place"))
         {
             slowBirds = FindObjectOfType<SlowBirds>();
-            if ((pickupControl2 != null && pickupControl2.animalAttached == true) || slowBirds.SlowingBirds2 == true)
+            if (slowBirds.SlowingBirds2 == true)
             {
+                slowBirdsActive2 = true;
+                AdjustSpeeds();
+            }
+
+        }
+        AnimalsControlled();
+        if (slowBirdsActive2 == false)
+        {
+
+            upanddownspeed = 300f;
+            forwardspeed = 14f;
+        }
+
+        void AnimalsControlled()
+        {
+            if (pickupControl != null && pickupControl.animalAttached == true)
+            {
+                slowBirdsActive2 = true;
                 AdjustSpeeds();
             }
             else
             {
                 slowBirdsActive2 = false;
-                upanddownspeed = 300f;
-                forwardspeed = 14f;
-            }
-            AnimalsControlled();
-        }    
-    }
 
-    public void AnimalsControlled()
-    {
-        if (pickupControl2 != null && pickupControl2.animalAttached == true)
-        {
-            slowBirdsActive2 = true;
-            AdjustSpeeds();
-        }
-        else
-        {
-            slowBirdsActive2 = false;
-            upanddownspeed = 300f;
-            forwardspeed = 14f;
+            }
         }
     }
     public void ResetSpeeds()
@@ -124,21 +121,10 @@ public class Player2 : MonoBehaviour
         upanddownspeed = 300f;
         forwardspeed = 14f;
     }
-
-
     public void AdjustSpeeds()
     {
         upanddownspeed = 200f;
         forwardspeed = 8f;
-    }
-
-    // Reset carried animal count if the bird is destroyed
-    void OnDestroy()
-    {
-        if (this != null)
-        {
-            currentAnimalsCarried = 0;
-        }
     }
 
 }

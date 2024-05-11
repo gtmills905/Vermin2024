@@ -10,17 +10,13 @@ public class Player1 : MonoBehaviour
     public float turnspeed = 400.0f;
     public float sensitivity = 5.0f;
 
-    public PickupControlPlayer1 pickupControl1;
+    public PickupControl pickupControl;
 
     public bool slowBirdsActive1;
     // Maximum number of animals that can be carried
     public int maxAnimalsCarried = 1;
 
     public SlowBirds slowBirds;
-
-
-    // Current number of animals carried
-    private int currentAnimalsCarried = 0;
 
 
     public Transform birdHandleTransform; // Reference to the bird handle's transform
@@ -99,24 +95,16 @@ public class Player1 : MonoBehaviour
 
         }
         AnimalsControlled();
-        if (slowBirdsActive1 = false)
+        if (slowBirdsActive1 == false)
         {
 
             upanddownspeed = 300f;
             forwardspeed = 14f;
         }
-
-         // Reset carried animal count if the bird is destroyed
-        void OnDestroy()
-        {
-          if (this != null)
-          {
-            currentAnimalsCarried = 0;
-          }
-        }        
+        
         void AnimalsControlled()
         {
-            if (pickupControl1 != null && pickupControl1.animalAttached == true)
+            if (pickupControl != null && pickupControl.animalAttached == true)
             {
                 slowBirdsActive1 = true;
                 AdjustSpeeds();

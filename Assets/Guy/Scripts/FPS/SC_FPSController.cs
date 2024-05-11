@@ -18,6 +18,9 @@ public class SC_FPSController : MonoBehaviour
     Vector3 moveDirection = Vector3.zero;
     float rotationX = 0;
 
+
+
+
     [HideInInspector]
     public bool canMove = true;
 
@@ -70,5 +73,7 @@ public class SC_FPSController : MonoBehaviour
             playerCamera.transform.localRotation = Quaternion.Euler(rotationX, 0, 0);
             transform.rotation *= Quaternion.Euler(0, Input.GetAxis("RightJoystickHorizontalCharacter4") * lookSpeed, 0);
         }
+
+
     }
 }

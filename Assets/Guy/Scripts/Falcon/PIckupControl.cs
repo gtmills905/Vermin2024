@@ -1,12 +1,13 @@
 using System.Runtime.Serialization;
 using UnityEngine;
 
-public class PickupControlPlayer2 : MonoBehaviour
+public class PickupControl : MonoBehaviour
 {
     public Transform pickupTarget; // This should be the attachment point on the bird
     public bool animalAttached = false;
 
-    private Rigidbody currentObject;
+    public Rigidbody currentObject;
+
 
     void OnTriggerEnter(Collider other)
     {
@@ -22,7 +23,7 @@ public class PickupControlPlayer2 : MonoBehaviour
                 AttachToObject();
                 animalAttached = true;
             }
-            else if (currentObject == null)
+            else if(currentObject == null)
             {
                 animalAttached = false;
             }
@@ -56,6 +57,7 @@ public class PickupControlPlayer2 : MonoBehaviour
 
             // Attach the object to the bird without changing its position and rotation
             currentObject.transform.SetParent(pickupTarget, false);
+
         }
     }
 

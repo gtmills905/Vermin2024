@@ -11,9 +11,9 @@ public class HaveIBeenShot : MonoBehaviour
         Manager = FindObjectOfType<GameManager>();
     }
 
-    public void OnCollisionEnter(Collision collision)
+    public void OnTriggerEnter(Collider other)
     {
-        if (collision.gameObject.CompareTag("Bullet"))
+        if (other.gameObject.CompareTag("Bullet"))
         {
 
             // Instantiate the impact VFX at the collision point

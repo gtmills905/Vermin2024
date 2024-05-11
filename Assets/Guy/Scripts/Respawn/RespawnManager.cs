@@ -6,6 +6,7 @@ public class RespawnManager : MonoBehaviour
     public GameObject player;
     public GameObject spawnPoint;
     private bool isRespawning = false;
+    public PickupControl pickupControl;
 
     public void RespawnPlayer()
     {
@@ -14,6 +15,15 @@ public class RespawnManager : MonoBehaviour
             isRespawning = true;
             player.transform.position = spawnPoint.transform.position;
             player.SetActive(false);
+
+            if (!player.activeSelf)
+            {
+                if (pickupControl != null && pickupControl.currentObject != null)
+                {
+                    Destroy(pickupControl.currentObject.gameObject);
+                }
+            }
+
             StartCoroutine(ReactivatePlayer());
         }
     }
