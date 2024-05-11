@@ -12,7 +12,7 @@ public class Player1 : MonoBehaviour
 
     public PickupControl pickupControl;
 
-    public bool slowBirdsActive1;
+    public bool slowBirdsActive1 = false;
     // Maximum number of animals that can be carried
     public int maxAnimalsCarried = 1;
 
@@ -98,8 +98,7 @@ public class Player1 : MonoBehaviour
         if (slowBirdsActive1 == false)
         {
 
-            upanddownspeed = 300f;
-            forwardspeed = 14f;
+            ResetSpeeds();
         }
         
         void AnimalsControlled()
@@ -109,7 +108,7 @@ public class Player1 : MonoBehaviour
                 slowBirdsActive1 = true;
                 AdjustSpeeds();
             }
-            else
+            if (pickupControl== null && pickupControl.animalAttached == false)
             {
                 slowBirdsActive1 = false;
 

@@ -97,9 +97,7 @@ public class Player2 : MonoBehaviour
         AnimalsControlled();
         if (slowBirdsActive2 == false)
         {
-
-            upanddownspeed = 300f;
-            forwardspeed = 14f;
+            ResetSpeeds();
         }
 
         void AnimalsControlled()
@@ -109,7 +107,7 @@ public class Player2 : MonoBehaviour
                 slowBirdsActive2 = true;
                 AdjustSpeeds();
             }
-            else
+            if (pickupControl == null && pickupControl.animalAttached == false)
             {
                 slowBirdsActive2 = false;
 

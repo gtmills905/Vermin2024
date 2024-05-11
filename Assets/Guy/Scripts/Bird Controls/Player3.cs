@@ -97,8 +97,7 @@ public class Player3 : MonoBehaviour
         if (slowBirdsActive3 == false)
         {
 
-            upanddownspeed = 300f;
-            forwardspeed = 14f;
+            ResetSpeeds();
         }
 
         void AnimalsControlled()
@@ -108,7 +107,7 @@ public class Player3 : MonoBehaviour
                 slowBirdsActive3 = true;
                 AdjustSpeeds();
             }
-            else
+            if (pickupControl == null && pickupControl.animalAttached == false)
             {
                 slowBirdsActive3 = false;
 

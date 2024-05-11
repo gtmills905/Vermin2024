@@ -48,9 +48,9 @@ public class SlowBirds : MonoBehaviour
     public void OnTriggerExit(Collider other)
     {
 
-        other.transform.TryGetComponent<Player1>(out player1Component);
-        other.transform.TryGetComponent<Player2>(out player2Component);
-        other.transform.TryGetComponent<Player3>(out player3Component);
+        other.transform.root.TryGetComponent<Player1>(out player1Component);
+        other.transform.root.TryGetComponent<Player2>(out player2Component);
+        other.transform.root.TryGetComponent<Player3>(out player3Component);
 
 
         if (other.CompareTag("Player"))
