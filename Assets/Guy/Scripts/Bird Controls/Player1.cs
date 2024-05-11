@@ -91,52 +91,54 @@ public class Player1 : MonoBehaviour
         if (Input.GetButtonDown("Place"))
         {
             slowBirds = FindObjectOfType<SlowBirds>();
-            if ((pickupControl1 != null && pickupControl1.animalAttached == true) || slowBirds.SlowingBirds1 == true)
+            if (slowBirds.SlowingBirds1 == true)
             {
+                slowBirdsActive1 = true;
+                AdjustSpeeds();
+            }
+
+        }
+        AnimalsControlled();
+        if (slowBirdsActive1 = false)
+        {
+
+            upanddownspeed = 300f;
+            forwardspeed = 14f;
+        }
+
+         // Reset carried animal count if the bird is destroyed
+        void OnDestroy()
+        {
+          if (this != null)
+          {
+            currentAnimalsCarried = 0;
+          }
+        }        
+        void AnimalsControlled()
+        {
+            if (pickupControl1 != null && pickupControl1.animalAttached == true)
+            {
+                slowBirdsActive1 = true;
                 AdjustSpeeds();
             }
             else
             {
                 slowBirdsActive1 = false;
-                upanddownspeed = 300f;
-                forwardspeed = 14f;
+
             }
-            AnimalsControlled();
         }
     }
-
-    public void AnimalsControlled()
+    public void  ResetSpeeds()
     {
-        if (pickupControl1 != null && pickupControl1.animalAttached == true)
-        {
-            slowBirdsActive1 = true;
-            AdjustSpeeds();
-        }
-        else
-        {
-            slowBirdsActive1 = false;
             upanddownspeed = 300f;
             forwardspeed = 14f;
-        }
-    }
-    public void ResetSpeeds()
-    {
-        upanddownspeed = 300f;
-        forwardspeed = 14f;
     }
     public void AdjustSpeeds()
     {
-        upanddownspeed = 200f;
-        forwardspeed = 8f;
+            upanddownspeed = 200f;
+            forwardspeed = 8f;
     }
 
-    // Reset carried animal count if the bird is destroyed
-    void OnDestroy()
-    {
-        if (this != null)
-        {
-            currentAnimalsCarried = 0;
-        }
-    }
-
+       
+    
 }

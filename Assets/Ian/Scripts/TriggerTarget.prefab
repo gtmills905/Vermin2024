@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 6854710293284195514}
   - component: {fileID: 9089804715771576606}
   - component: {fileID: 5212682268382577763}
+  - component: {fileID: 477787604914470746}
   m_Layer: 0
   m_Name: TriggerTarget
   m_TagString: Food
@@ -71,6 +72,19 @@ MonoBehaviour:
   maxRotationAngle: 180
   minWaitTime: 1
   maxWaitTime: 5
+--- !u!114 &477787604914470746
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7419606002733031817}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b69f9c1474b6ef34d952ee069ce2d33f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  child: {fileID: 6348443359428062517}
 --- !u!1 &8129203838241699758
 GameObject:
   m_ObjectHideFlags: 0
