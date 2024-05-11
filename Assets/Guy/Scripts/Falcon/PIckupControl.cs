@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Runtime.Serialization;
 using UnityEngine;
 
@@ -19,13 +20,13 @@ public class PickupControl : MonoBehaviour
                 // Get the Rigidbody of the collided object's parent
                 Rigidbody targetRigidbody = other.GetComponentInParent<Rigidbody>();
 
-                currentObject = targetRigidbody;
-                AttachToObject();
-                animalAttached = true;
-            }
-            else if(currentObject == null)
-            {
-                animalAttached = false;
+                // Ensure the Rigidbody is not null before proceeding
+                if (targetRigidbody != null)
+                {
+                    currentObject = targetRigidbody;
+                    AttachToObject();
+                    animalAttached = true;
+                }
             }
         }
     }

@@ -86,32 +86,117 @@ public class Player3 : MonoBehaviour
         if (Input.GetButtonDown("Place"))
         {
             slowBirds = FindObjectOfType<SlowBirds>();
-            if (slowBirds.SlowingBirds3 == true)
-            {
-                slowBirdsActive3 = true;
-                AdjustSpeeds();
-            }
 
         }
+
         AnimalsControlled();
-        if (slowBirdsActive3 == false)
+
+
+    }
+    public void AnimalsControlled()
+    {
+
+
+        // Check if slowBirdsActive1 flag is true
+
+
+        if (slowBirdsActive3)
+
         {
+            // Adjust speeds when slowed by other scripts
+            AdjustSpeeds();
+
+        }
+
+        else
+
+        {
+            // Reset speeds when not slowed by other scripts
+            ResetSpeeds();
+
+        }
+
+
+        // Check if pickupControl is not null and an animal is attached
+
+        if (pickupControl != null && pickupControl.animalAttached)
+
+        {
+
+            // Adjust speeds when an animal is attached
+
+            AdjustSpeeds();
+
+        }
+
+        else
+
+        {
+
+            // Reset speeds when no animal is attached
+
+            ResetSpeeds();
+
+        }
+        if (pickupControl != null && pickupControl.animalAttached == true)
+        {
+            slowBirdsActive3 = true;
+            AdjustSpeeds();
+        }
+        if (pickupControl.animalAttached == false)
+        {
+            slowBirdsActive3 = false;
 
             ResetSpeeds();
         }
+        if (slowBirdsActive3)
 
-        void AnimalsControlled()
         {
-            if (pickupControl != null && pickupControl.animalAttached == true)
-            {
-                slowBirdsActive3 = true;
-                AdjustSpeeds();
-            }
-            if (pickupControl == null && pickupControl.animalAttached == false)
-            {
-                slowBirdsActive3 = false;
+            // Adjust speeds when slowed by other scripts
+            AdjustSpeeds();
 
-            }
+        }
+
+        else
+
+        {
+            // Reset speeds when not slowed by other scripts
+            ResetSpeeds();
+
+        }
+
+
+        // Check if pickupControl is not null and an animal is attached
+
+        if (pickupControl != null && pickupControl.animalAttached)
+
+        {
+
+            // Adjust speeds when an animal is attached
+
+            AdjustSpeeds();
+
+        }
+
+        else
+
+        {
+
+            // Reset speeds when no animal is attached
+
+            ResetSpeeds();
+
+        }
+        if (pickupControl != null && pickupControl.animalAttached == true)
+        {
+            slowBirdsActive3 = true;
+            AdjustSpeeds();
+        }
+        if (pickupControl.animalAttached == false)
+        {
+            slowBirdsActive3 = false;
+
+            ResetSpeeds();
         }
     }
     public void ResetSpeeds()

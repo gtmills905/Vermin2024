@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -14,9 +15,9 @@ public class DropOffSystem : MonoBehaviour
         {
             audioSource.Play();
             UniversalDepositObject();
-            Debug.Log("Item deposited. Total count: " + gameManager.birdScore);
             Destroy(other.gameObject);
             pigSpawnerUpdated.PigDestroyed();
+
         }
     }
 
