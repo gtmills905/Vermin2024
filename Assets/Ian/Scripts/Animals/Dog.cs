@@ -8,16 +8,23 @@ public class Dog : MonoBehaviour
     public float detectionDistance = 10f;
     public float detectionAngle = 45f;
     public LayerMask detectionLayer;
+    private float jumpForce = 10f;
+    private bool isGrounded = false;
+
+    private Rigidbody rb;
+
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        rb = GetComponent<Rigidbody>();
+
     }
 
     // Update is called once per frame
     void Update()
     {
+        isGrounded = Physics.Raycast(transform.position, Vector3.down, 0.1f);
         if ( Released == true)
         {
             RaycastHit hit;
@@ -33,6 +40,11 @@ public class Dog : MonoBehaviour
                    Vector3 direction = birdPos - DogPos;
                    Quaternion targetRotation = Quaternion.LookRotation(direction, Vector3.up);
                    transform.rotation = targetRotation;
+                    if ((DogPos == birdPos)&&(isGrounded == true))
+                    {
+                        rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+
+                    }
 
                 }
             }
