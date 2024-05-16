@@ -90,6 +90,7 @@ public class Player1 : MonoBehaviour
 
         }
 
+
         AnimalsControlled();
         
         

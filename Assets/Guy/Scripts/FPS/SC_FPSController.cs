@@ -13,6 +13,8 @@ public class SC_FPSController : MonoBehaviour
     public Camera playerCamera;
     public float lookSpeed = 2.0f;
     public float lookXLimit = 45.0f;
+    public bool dogAttatched;
+    public Dog Dog;
 
     CharacterController characterController;
     Vector3 moveDirection = Vector3.zero;
@@ -27,6 +29,7 @@ public class SC_FPSController : MonoBehaviour
     void Start()
     {
         characterController = GetComponent<CharacterController>();
+        Dog = GameObject.Find("Dog").GetComponent<Dog>();
 
         // Lock cursor
         Cursor.lockState = CursorLockMode.Locked;
@@ -44,6 +47,17 @@ public class SC_FPSController : MonoBehaviour
         float curSpeedY = canMove ? (isRunning ? runningSpeed : walkingSpeed) * Input.GetAxis("HorizontalCharacter4") : 0;
         float movementDirectionY = moveDirection.y;
         moveDirection = (forward * curSpeedX) + (right * curSpeedY);
+
+        float releaseDog = Input.GetAxis("releaseDog");
+
+        if(Input.GetButton("ReleaseDog") && ( dogAttatched == true) && (Dog.Released == false))
+        {
+            Dog.Released = true;
+            dogAttatched = false;
+
+        }
+
+
 
         if (Input.GetButton("Jump") && canMove && characterController.isGrounded)
         {
