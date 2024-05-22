@@ -16,6 +16,7 @@ TagManager:
   - Nest
   - Obstacle
   - Farmer
+  - Sea
   layers:
   - Default
   - TransparentFX

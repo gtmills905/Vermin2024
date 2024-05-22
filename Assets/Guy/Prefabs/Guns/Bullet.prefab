@@ -131,8 +131,8 @@ SphereCollider:
   m_ProvidesContacts: 1
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 79.09919
-  m_Center: {x: -0.6758895, y: 41.750027, z: 77.99175}
+  m_Radius: 51.34974
+  m_Center: {x: -0.6758895, y: 14.000498, z: 77.99176}
 --- !u!1 &2250364637009673864
 GameObject:
   m_ObjectHideFlags: 0
@@ -264,8 +264,8 @@ SphereCollider:
   m_ProvidesContacts: 1
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 80.464806
-  m_Center: {x: 0, y: -55.38576, z: 73.04864}
+  m_Radius: 42.300167
+  m_Center: {x: 0, y: -17.221046, z: 73.04864}
 --- !u!1 &4976348713980597961
 GameObject:
   m_ObjectHideFlags: 0
@@ -397,8 +397,8 @@ SphereCollider:
   m_ProvidesContacts: 1
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 90.03947
-  m_Center: {x: 0, y: 4.9517236, z: 84.58776}
+  m_Radius: 66.1548
+  m_Center: {x: 0, y: -18.932951, z: 84.58776}
 --- !u!1 &8355841258905750581
 GameObject:
   m_ObjectHideFlags: 0
@@ -641,8 +641,8 @@ SphereCollider:
   m_ProvidesContacts: 1
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 168.08261
-  m_Center: {x: 1.3536483, y: 31.60181, z: 172.33679}
+  m_Radius: 84.88317
+  m_Center: {x: 1.3536483, y: 31.601822, z: 89.13731}
 --- !u!54 &3529955780702774396
 Rigidbody:
   m_ObjectHideFlags: 0

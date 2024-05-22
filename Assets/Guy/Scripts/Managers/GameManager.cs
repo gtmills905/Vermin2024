@@ -10,6 +10,9 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI BirdLivesText;
     public TextMeshProUGUI timerText;
 
+    public AudioSource givemebackmypigAudioSource;
+    public AudioClip givemebackmypigSoundClip;
+
     public int birdScore = 0;
     public int BirdLives = 10;
 
@@ -41,14 +44,25 @@ public class GameManager : MonoBehaviour
     private void Update()
     {
         UpdateScoreText();
-
+        if(birdScore == 10)
+        {
+            Debug.Log("Birds Win!");
+        }
+        if(birdScore== 5)
+        {
+            givemebackmypigAudioSource.PlayOneShot(givemebackmypigSoundClip);
+        }
+        if(BirdLives == 0)
+        {
+            Debug.Log("Farmers Win!");
+        }
         // Update timer
         if (timer > 0)
         {
             timer -= Time.deltaTime;
             UpdateTimerText();
 
-            // If timer runs out (5 minutes elapsed), determine the winner
+            // If timer runs out (10 minutes elapsed), determine the winner
 
             if (birdScore > BirdLives)
             {

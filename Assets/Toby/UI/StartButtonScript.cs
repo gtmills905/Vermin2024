@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-
+using TMPro;
 
 public class StartButtonScript : MonoBehaviour
 {
@@ -11,7 +11,12 @@ public class StartButtonScript : MonoBehaviour
     public void OnClick()
     {
         gunShotSoundAudioSource.PlayOneShot(gunShotSoundClip);
-        SceneManager.LoadScene("Vermin");
+        StartCoroutine(LoadSceneWithDelay("Vermin", 0.5f));
+    }
 
+    IEnumerator LoadSceneWithDelay(string sceneName, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        SceneManager.LoadScene(sceneName);
     }
 }
