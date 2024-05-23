@@ -9,7 +9,7 @@ public class ConInputUpdated : MonoBehaviour
     private int currentSelected = 0;
     private MenuControls controls;
     private Vector2 navigationInput;
-    private float inputCooldown = 0.5f; // Adjust the cooldown period if necessary
+    private float inputCooldown = 1f; // Adjust the cooldown period if necessary
     private float lastInputTime = 0f;
 
     void Awake()
