@@ -24,7 +24,7 @@ public class LivesCounter : MonoBehaviour
     
         if (LivesLeft >= 0) 
         {
-            SceneManager.LoadScene("WinScene");
+            SceneManager.LoadScene("Birds Win");
         }
     }
 }

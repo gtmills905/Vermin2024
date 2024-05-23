@@ -21,7 +21,7 @@ public class SC_FPSController : MonoBehaviour
     float rotationX = 0;
 
 
-    public Animator animator; // Reference to the Animator component
+    public Animator anim; // Reference to the Animator component
 
     [HideInInspector]
     public bool canMove = true;
@@ -41,6 +41,7 @@ public class SC_FPSController : MonoBehaviour
         if (!disabled)
         {
             isRunning = Input.GetButton("Joystick4Button8");
+            anim.Play("Run");
             // We are grounded, so recalculate move direction based on axes
             Vector3 forward = transform.TransformDirection(Vector3.forward);
             Vector3 right = transform.TransformDirection(Vector3.right);

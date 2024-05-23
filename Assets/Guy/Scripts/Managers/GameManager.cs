@@ -1,5 +1,6 @@
 using UnityEngine;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 
 public class GameManager : MonoBehaviour
@@ -46,7 +47,7 @@ public class GameManager : MonoBehaviour
         UpdateScoreText();
         if(birdScore == 10)
         {
-            Debug.Log("Birds Win!");
+            SceneManager.LoadScene("Birds Win");
         }
         if(birdScore== 5)
         {
@@ -54,7 +55,7 @@ public class GameManager : MonoBehaviour
         }
         if(BirdLives == 0)
         {
-            Debug.Log("Farmers Win!");
+            SceneManager.LoadScene("Farmer Win");
         }
         // Update timer
         if (timer > 0)
@@ -66,12 +67,12 @@ public class GameManager : MonoBehaviour
 
             if (birdScore > BirdLives)
             {
-                Debug.Log("Birds Win!");
+                SceneManager.LoadScene("Birds Win");
                 // You can add more logic here, such as displaying a win screen or triggering other game events.
             }
             else if (BirdLives <= 0)
             {
-                Debug.Log("Farmers Win!");
+                SceneManager.LoadScene("Farmer Win");
                 // You can add more logic here, such as displaying a win screen or triggering other game events.
             }
         }
