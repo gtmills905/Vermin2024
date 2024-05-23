@@ -9,8 +9,8 @@ public class PigSpawnerUpdated : MonoBehaviour
     private Vector3 MyPos;
     [SerializeField]
     private int SpawnArea = 1;
-    private const int MaxInitialPigs = 7; // Changed to 7
-    private const int MaxTotalPigs = 10; // Changed to 10
+    private const int MaxInitialPigs = 15; // Changed to 7
+    private const int MaxTotalPigs = 20; // Changed to 10
     private int currentPigCount = 0;
 
     // Start is called before the first frame update

@@ -27,20 +27,20 @@ public class SlowBirds : MonoBehaviour
             if (player1Component != null)
             {
                 SlowingBirds1 = true;
-                player1Component.slowBirdsActive1 = true;
+                player1Component.inZone = true;
                 player1Component.AdjustSpeeds();
 
             }
             if (player2Component != null)
             {
                 SlowingBirds2 = true;
-                player2Component.slowBirdsActive2 = true;
+                player2Component.inZone = true;
                 player2Component.AdjustSpeeds();
             }
             if (player3Component != null)
             {
                 SlowingBirds3 = true;
-                player3Component.slowBirdsActive3 = true;
+                player3Component.inZone = true;
                 player3Component.AdjustSpeeds();
             }
         }
@@ -57,18 +57,21 @@ public class SlowBirds : MonoBehaviour
         {
             if (player1Component != null)
             {
+                player1Component.inZone = false;
                 SlowingBirds1 = false;
                 player1Component.ResetSpeeds();
                 player1Component = null;
             }
             if (player2Component != null)
             {
+                player2Component.inZone = false;
                 SlowingBirds2 = false;
                 player2Component.ResetSpeeds();
                 player2Component = null;
             }
             if (player3Component != null)
             {
+                player3Component.inZone = false;
                 SlowingBirds3 = false;
                 player3Component.ResetSpeeds();
                 player3Component = null;

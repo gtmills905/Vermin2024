@@ -9,7 +9,7 @@ public class Player1 : MonoBehaviour
     public float forwardspeed = 600.0f;
     public float turnspeed = 400.0f;
     public float sensitivity = 5.0f;
-
+    public bool inZone = false;
     public PickupControl pickupControl;
 
     public bool slowBirdsActive1 = false;
@@ -98,11 +98,17 @@ public class Player1 : MonoBehaviour
     public void AnimalsControlled()
     {
 
+        if (!inZone && !(pickupControl != null && pickupControl.animalAttached))
 
-        // Check if slowBirdsActive1 flag is true
+        {
+
+            // Reset speeds when not slowed by other scripts
+            ResetSpeeds();
 
 
-        if (slowBirdsActive1)
+        }
+
+        else
 
         {
             // Adjust speeds when slowed by other scripts
@@ -110,106 +116,16 @@ public class Player1 : MonoBehaviour
 
         }
 
-        else
-
-        {
-            // Reset speeds when not slowed by other scripts
-            ResetSpeeds();
-
-        }
-
-
-        // Check if pickupControl is not null and an animal is attached
-
-        if (pickupControl != null && pickupControl.animalAttached)
-
-        {
-
-            // Adjust speeds when an animal is attached
-
-            AdjustSpeeds();
-
-        }
-
-        else
-
-        {
-
-            // Reset speeds when no animal is attached
-
-            ResetSpeeds();
-
-        }
-        if (pickupControl != null && pickupControl.animalAttached == true)
-        {
-            slowBirdsActive1 = true;
-            AdjustSpeeds();
-        }
-        if (pickupControl.animalAttached == false)
-        {
-            slowBirdsActive1 = false;
-
-            ResetSpeeds();
-        }
-        if (slowBirdsActive1)
-
-        {
-            // Adjust speeds when slowed by other scripts
-            AdjustSpeeds();
-
-        }
-
-        else
-
-        {
-            // Reset speeds when not slowed by other scripts
-            ResetSpeeds();
-
-        }
-
-
-        // Check if pickupControl is not null and an animal is attached
-
-        if (pickupControl != null && pickupControl.animalAttached)
-
-        {
-
-            // Adjust speeds when an animal is attached
-
-            AdjustSpeeds();
-
-        }
-
-        else
-
-        {
-
-            // Reset speeds when no animal is attached
-
-            ResetSpeeds();
-
-        }
-        if (pickupControl != null && pickupControl.animalAttached == true)
-        {
-            slowBirdsActive1 = true;
-            AdjustSpeeds();
-        }
-        if (pickupControl.animalAttached == false)
-        {
-            slowBirdsActive1 = false;
-
-            ResetSpeeds();
-        }
     }
     public void  ResetSpeeds()
     {
-            upanddownspeed = 300f;
-            forwardspeed = 14f;
+            upanddownspeed = 800f;
+            forwardspeed = 25f;
     }
     public void AdjustSpeeds()
     {
-            upanddownspeed = 200f;
-            forwardspeed = 8f;
+            upanddownspeed = 300f;
+            forwardspeed = 14f;
     }
 
 }

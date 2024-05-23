@@ -30,7 +30,7 @@ public class RespawnManager : MonoBehaviour
 
     IEnumerator ReactivatePlayer()
     {
-        yield return new WaitForSeconds(20f);
+        yield return new WaitForSeconds(5f);
         player.SetActive(true);
         isRespawning = false;
     }

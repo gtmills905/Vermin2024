@@ -44,6 +44,8 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
+        timer -= Time.deltaTime;
+        UpdateTimerText();
         UpdateScoreText();
         if(birdScore == 10)
         {
@@ -57,25 +59,42 @@ public class GameManager : MonoBehaviour
         {
             SceneManager.LoadScene("Farmer Win");
         }
+
+
         // Update timer
-        if (timer > 0)
+        if (timer <= 0f)
         {
-            timer -= Time.deltaTime;
-            UpdateTimerText();
-
-            // If timer runs out (10 minutes elapsed), determine the winner
-
-            if (birdScore > BirdLives)
+            // Check if birdScore and BirdLives are complementary out of 10
+            if (birdScore + BirdLives == 10)
             {
-                SceneManager.LoadScene("Birds Win");
-                // You can add more logic here, such as displaying a win screen or triggering other game events.
+                SceneManager.LoadScene("Tie");
             }
-            else if (BirdLives <= 0)
+            else
             {
-                SceneManager.LoadScene("Farmer Win");
-                // You can add more logic here, such as displaying a win screen or triggering other game events.
+                // If timer runs out (5 minutes elapsed), determine the winner
+                if (birdScore > BirdLives)
+                {
+                    SceneManager.LoadScene("Birds Win");
+                    // You can add more logic here, such as displaying a win screen or triggering other game events.
+                }
+                else if (BirdLives > birdScore)
+                {
+                    SceneManager.LoadScene("Farmer Win");
+                    // You can add more logic here, such as displaying a win screen or triggering other game events.
+                }
+                else if (BirdLives <= 0)
+                {
+                    SceneManager.LoadScene("Farmer Win");
+                    // You can add more logic here, such as displaying a win screen or triggering other game events.
+                }
+                else
+                {
+                    SceneManager.LoadScene("Tie");
+                    // You can add more logic here, such as displaying a win screen or triggering other game events.
+                }
             }
         }
+
 
     }
 
