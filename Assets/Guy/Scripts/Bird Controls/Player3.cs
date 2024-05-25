@@ -1,3 +1,4 @@
+using System.Runtime.Serialization;
 using UnityEngine;
 
 public class Player3 : MonoBehaviour
@@ -11,12 +12,11 @@ public class Player3 : MonoBehaviour
     public bool inZone = false;
     public PickupControl pickupControl;
 
-    public SlowBirds slowBirds;
     public bool slowBirdsActive3 = false;
-
     // Maximum number of animals that can be carried
     public int maxAnimalsCarried = 1;
 
+    public SlowBirds slowBirds;
 
     public Transform birdHandleTransform; // Reference to the bird handle's transform
     public float maxHandleRotationAngle = 45f; // Maximum rotation angle of the bird handle
@@ -31,10 +31,15 @@ public class Player3 : MonoBehaviour
 
     public PlayerCharacter characterType;
 
+    private float originalForwardSpeed;
+    private float lastYPosition;
+
     void Start()
     {
         controller = GetComponent<CharacterController>();
         anim = gameObject.GetComponentInChildren<Animator>();
+        originalForwardSpeed = forwardspeed;
+        lastYPosition = transform.position.y;
     }
 
     void Update()
@@ -71,6 +76,23 @@ public class Player3 : MonoBehaviour
         // Up and down based on left and right joystick vertical
         moveDirection.y += rightVertical * upanddownspeed * Time.deltaTime;
 
+        // Adjust forward speed based on Y-axis drop
+        float currentYPosition = transform.position.y;
+        float dropDistance = lastYPosition - currentYPosition;
+
+        if (dropDistance > 0)
+        {
+            float dropFactor = Mathf.Clamp01(dropDistance / 10f); // Assuming max drop distance is 10 for full speed increase
+            forwardspeed = originalForwardSpeed * (1 + dropFactor * 0.3f); // Up to 30% speed increase
+        }
+        else
+        {
+            forwardspeed = originalForwardSpeed;
+        }
+
+        // Update lastYPosition for the next frame
+        lastYPosition = currentYPosition;
+
         // Move the character
         controller.Move(moveDirection * Time.deltaTime);
 
@@ -83,53 +105,37 @@ public class Player3 : MonoBehaviour
         {
             anim.SetInteger("AnimationPar", 0);
         }
-        
+        if (Input.GetButtonDown("Place"))
+        {
             slowBirds = FindObjectOfType<SlowBirds>();
-
-        
-
-        AnimalsControlled();
-
-
-    }
-    public void AnimalsControlled()
-    {
-
-
-        // Check if slowBirdsActive1 flag is true
-
-
-        if (!inZone && !(pickupControl != null && pickupControl.animalAttached))
-
-        { 
-            
-            // Reset speeds when not slowed by other scripts
-            ResetSpeeds();
-           
-
         }
 
-        else
+        AnimalsControlled();
+    }
 
+    public void AnimalsControlled()
+    {
+        if (!inZone && !(pickupControl != null && pickupControl.animalAttached))
+        {
+            // Reset speeds when not slowed by other scripts
+            ResetSpeeds();
+        }
+        else
         {
             // Adjust speeds when slowed by other scripts
             AdjustSpeeds();
-
         }
-
-
-      
     }
+
     public void ResetSpeeds()
     {
-        upanddownspeed = 800f;
+        upanddownspeed = 700f;
         forwardspeed = 25f;
     }
+
     public void AdjustSpeeds()
     {
-        upanddownspeed = 300f;
+        upanddownspeed = 400f;
         forwardspeed = 14f;
     }
-
-
 }

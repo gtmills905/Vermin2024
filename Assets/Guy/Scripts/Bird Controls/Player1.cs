@@ -1,4 +1,4 @@
-using System.Runtime.Serialization;
+using System.Collections;
 using UnityEngine;
 
 public class Player1 : MonoBehaviour
@@ -13,14 +13,16 @@ public class Player1 : MonoBehaviour
     public PickupControl pickupControl;
 
     public bool slowBirdsActive1 = false;
-    // Maximum number of animals that can be carried
     public int maxAnimalsCarried = 1;
 
     public SlowBirds slowBirds;
 
+    public Transform birdHandleTransform;
+    public float maxHandleRotationAngle = 45f;
 
-    public Transform birdHandleTransform; // Reference to the bird handle's transform
-    public float maxHandleRotationAngle = 45f; // Maximum rotation angle of the bird handle
+    public float rollDuration = 1f;
+
+    private bool isRolling = false;
 
     public enum PlayerCharacter
     {
@@ -32,33 +34,79 @@ public class Player1 : MonoBehaviour
 
     public PlayerCharacter characterType;
 
+    private float originalForwardSpeed;
+    private float lastYPosition;
+
     void Start()
     {
         controller = GetComponent<CharacterController>();
         anim = gameObject.GetComponentInChildren<Animator>();
+        originalForwardSpeed = forwardspeed;
+        lastYPosition = transform.position.y;
     }
 
     void Update()
     {
-        string verticalAxis = "Vertical" + characterType.ToString();
+        if (!isRolling)
+        {
+            HandleMovement();
+            HandleRotation();
+        }
 
+        if (Input.GetButtonDown("LTJoystick1")) // Replace with your actual input name
+        {
+            Debug.Log("work");
+            StartCoroutine(BarrelRoll(-1));
+        }
+        else if (Input.GetButtonDown("RTJoystick1")) // Replace with your actual input name
+        {
+            StartCoroutine(BarrelRoll(1));
+        }
+
+        HandleAnimation();
+        HandleBirdHandleRotation();
+        AdjustForwardSpeedBasedOnYPosition();
+
+        AnimalsControlled();
+    }
+
+    private void HandleMovement()
+    {
+        string verticalAxis = "Vertical" + characterType.ToString();
         float vertical = Input.GetAxis(verticalAxis);
+        Vector3 moveDirection = transform.forward * vertical * forwardspeed;
         float rightVertical = Input.GetAxis("RightJoystickVertical1");
+
+        moveDirection.y += rightVertical * upanddownspeed * Time.deltaTime;
+        controller.Move(moveDirection * Time.deltaTime);
+    }
+
+    private void HandleRotation()
+    {
         float rightHorizontal = Input.GetAxis("RightJoystickHorizontal1");
         float characterHorizontal = Input.GetAxis("HorizontalCharacter1");
         float rightandleftHorizontal = rightHorizontal + characterHorizontal;
-
-        // Calculate rotation based on right joystick input
         Vector3 rotation = new Vector3(0, rightandleftHorizontal * turnspeed * Time.deltaTime, 0);
         transform.Rotate(rotation);
+    }
 
-        // Movement based on left joystick
-        Vector3 moveDirection = transform.forward * vertical * forwardspeed;
+    private void HandleAnimation()
+    {
+        string verticalAxis = "Vertical" + characterType.ToString();
+        float vertical = Input.GetAxis(verticalAxis);
+        if (Mathf.Abs(vertical) > 0.1f)
+        {
+            anim.SetInteger("AnimationPar", 1);
+        }
+        else
+        {
+            anim.SetInteger("AnimationPar", 0);
+        }
+    }
 
-        // Turning based on left joystick
-        transform.Rotate(0, rightandleftHorizontal * turnspeed * Time.deltaTime, 0);
-
-        // Rotate bird handle forward when moving downward on the y-axis
+    private void HandleBirdHandleRotation()
+    {
+        float rightVertical = Input.GetAxis("RightJoystickVertical1");
         if (rightVertical < 0)
         {
             float rotationAngle = Mathf.Lerp(0, maxHandleRotationAngle, -rightVertical);
@@ -68,64 +116,63 @@ public class Player1 : MonoBehaviour
         {
             birdHandleTransform.localRotation = Quaternion.identity;
         }
+    }
 
-        // Up and down based on left and right joystick vertical
-        moveDirection.y += rightVertical * upanddownspeed * Time.deltaTime;
-
-        // Move the character
-        controller.Move(moveDirection * Time.deltaTime);
-
-        // Animation control
-        if (Mathf.Abs(vertical) > 0.1f)
+    private void AdjustForwardSpeedBasedOnYPosition()
+    {
+        float currentYPosition = transform.position.y;
+        float dropDistance = lastYPosition - currentYPosition;
+        if (dropDistance > 0)
         {
-            anim.SetInteger("AnimationPar", 1);
+            float dropFactor = Mathf.Clamp01(dropDistance / 10f);
+            forwardspeed = originalForwardSpeed * (1 + dropFactor * 0.3f);
         }
         else
         {
-            anim.SetInteger("AnimationPar", 0);
+            forwardspeed = originalForwardSpeed;
         }
-        if (Input.GetButtonDown("Place"))
-        {
-            slowBirds = FindObjectOfType<SlowBirds>();
-
-        }
-
-
-        AnimalsControlled();
-        
-        
+        lastYPosition = currentYPosition;
     }
+
+    private IEnumerator BarrelRoll(int direction)
+    {
+        isRolling = true;
+        float elapsedTime = 0f;
+        Quaternion startRotation = transform.rotation;
+        Quaternion endRotation = startRotation * Quaternion.Euler(0f, 0f, 360f * direction);
+
+        while (elapsedTime < rollDuration)
+        {
+            transform.rotation = Quaternion.Slerp(startRotation, endRotation, elapsedTime / rollDuration);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        transform.rotation = endRotation;
+        isRolling = false;
+    }
+
     public void AnimalsControlled()
     {
-
         if (!inZone && !(pickupControl != null && pickupControl.animalAttached))
-
         {
-
-            // Reset speeds when not slowed by other scripts
             ResetSpeeds();
-
-
         }
-
         else
-
         {
-            // Adjust speeds when slowed by other scripts
             AdjustSpeeds();
-
         }
+    }
 
-    }
-    public void  ResetSpeeds()
+    public void ResetSpeeds()
     {
-            upanddownspeed = 800f;
-            forwardspeed = 25f;
+        upanddownspeed = 700f;
+        forwardspeed = 25f;
     }
+
     public void AdjustSpeeds()
     {
-            upanddownspeed = 300f;
-            forwardspeed = 14f;
+        upanddownspeed = 400f;
+        forwardspeed = 14f;
     }
-
 }
