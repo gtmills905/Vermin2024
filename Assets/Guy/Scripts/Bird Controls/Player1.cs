@@ -53,12 +53,12 @@ public class Player1 : MonoBehaviour
             HandleRotation();
         }
 
-        if (Input.GetButtonDown("LTJoystick1")) // Replace with your actual input name
+        if (Input.GetButtonDown("LTJoystick1"))
         {
-            Debug.Log("work");
+
             StartCoroutine(BarrelRoll(-1));
         }
-        else if (Input.GetButtonDown("RTJoystick1")) // Replace with your actual input name
+        else if (Input.GetButtonDown("RTJoystick1"))
         {
             StartCoroutine(BarrelRoll(1));
         }
