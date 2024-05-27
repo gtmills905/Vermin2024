@@ -15,7 +15,7 @@ public class GameManager : MonoBehaviour
     public AudioClip givemebackmypigSoundClip;
 
     public int birdScore = 0;
-    public int BirdLives = 10;
+    public int BirdLives = 0;
 
     public DropOffSystem[] dropOffSystem;
 
@@ -51,11 +51,7 @@ public class GameManager : MonoBehaviour
         {
             SceneManager.LoadScene("Birds Win");
         }
-        if(birdScore== 5)
-        {
-            givemebackmypigAudioSource.PlayOneShot(givemebackmypigSoundClip);
-        }
-        if(BirdLives == 0)
+        if(BirdLives == 10)
         {
             SceneManager.LoadScene("Farmer Win");
         }
@@ -109,14 +105,14 @@ public class GameManager : MonoBehaviour
     // Call this method when the farmer kills a bird
     public void FarmerKill(int points)
     {
-        BirdLives -= points;
+        BirdLives += points;
         UpdateScoreText();
     }
 
     void UpdateScoreText()
     {
         birdScoreText.text = "     Score: " + birdScore.ToString();
-        BirdLivesText.text = "Bird Lives " + BirdLives.ToString();
+        BirdLivesText.text = "Lives Taken: " + BirdLives.ToString();
     }
 
     void UpdateTimerText()

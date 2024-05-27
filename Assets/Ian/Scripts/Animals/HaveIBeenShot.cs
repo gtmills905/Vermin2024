@@ -22,7 +22,7 @@ public class HaveIBeenShot : MonoBehaviour
             // Destroy the VFX after 2 seconds
             Destroy(impactVFX, 2f);
 
-            Manager.BirdLives -= 1;
+            Manager.BirdLives += 1;
             respawnManager.RespawnPlayer();
         }
     }
