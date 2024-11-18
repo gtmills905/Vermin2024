@@ -8,7 +8,7 @@ public class BoundingBox : MonoBehaviour
         {
             // Prevent the player from moving further
             Rigidbody playerRigidbody = other.transform.root.GetComponent<Rigidbody>();
-            playerRigidbody.velocity = Vector3.zero;
+            playerRigidbody.linearVelocity = Vector3.zero;
         }
     }
 }

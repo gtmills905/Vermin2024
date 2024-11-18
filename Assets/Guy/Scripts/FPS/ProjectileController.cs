@@ -15,7 +15,7 @@ public class ProjectileController : MonoBehaviour
         if (rb != null)
         {
             // Set the velocity with the given direction and speed
-            rb.velocity = direction * projectileSpeed;
+            rb.linearVelocity = direction * projectileSpeed;
 
             // Set the rotation of the instantiated projectile to face the direction
             projectile.transform.rotation = Quaternion.LookRotation(direction, Vector3.up);
@@ -26,7 +26,7 @@ public class ProjectileController : MonoBehaviour
             // Apply the same velocity to each child Rigidbody
             foreach (Rigidbody childRB in childRigidbodies)
             {
-                childRB.velocity = direction * projectileSpeed;
+                childRB.linearVelocity = direction * projectileSpeed;
             }
 
             // Destroy the projectile after a delay

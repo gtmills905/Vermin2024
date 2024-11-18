@@ -106,7 +106,7 @@ public class DogUpdated : MonoBehaviour
         {
             Recalling = false;
             transform.position = RecallPos; // Snap to the recall position to prevent jittering
-            rb.velocity = Vector3.zero; // Stop any movement
+            rb.linearVelocity = Vector3.zero; // Stop any movement
         }
     }
 
