@@ -1,7 +1,8 @@
 using System.Collections;
 using UnityEngine;
+using Unity.Netcode;
 
-public class Player1 : MonoBehaviour
+public class Player1 : NetworkBehaviour
 {
     private Animator anim;
     private CharacterController controller;
@@ -45,8 +46,19 @@ public class Player1 : MonoBehaviour
         lastYPosition = transform.position.y;
     }
 
+    public override void OnNetworkSpawn()
+    {
+        if (!IsOwner)
+        {
+            enabled = false;  // Disable all controls for non-owners
+            return;
+        }
+    }
+
     void Update()
     {
+        if (!IsOwner) return; // Skip for non-owner players
+
         if (!isRolling)
         {
             HandleMovement();
@@ -55,7 +67,6 @@ public class Player1 : MonoBehaviour
 
         if (Input.GetButtonDown("LTJoystick1"))
         {
-
             StartCoroutine(BarrelRoll(-1));
         }
         else if (Input.GetButtonDown("RTJoystick1"))
@@ -75,8 +86,9 @@ public class Player1 : MonoBehaviour
         string verticalAxis = "Vertical" + characterType.ToString();
         float vertical = Input.GetAxis(verticalAxis);
         Vector3 moveDirection = transform.forward * vertical * forwardspeed;
-        float rightVertical = Input.GetAxis("RightJoystickVertical1");
 
+        // Allow vertical movement with RightJoystick
+        float rightVertical = Input.GetAxis("RightJoystickVertical1");
         moveDirection.y += rightVertical * upanddownspeed * Time.deltaTime;
         controller.Move(moveDirection * Time.deltaTime);
     }
@@ -176,3 +188,4 @@ public class Player1 : MonoBehaviour
         forwardspeed = 14f;
     }
 }
+

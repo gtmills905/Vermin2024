@@ -1,10 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Netcode;
 
 [RequireComponent(typeof(CharacterController))]
 
-public class SC_FPSController : MonoBehaviour
+public class SC_FPSController : NetworkBehaviour
 {
     public bool disabled = false;
     public float walkingSpeed = 7.5f;
@@ -35,9 +36,18 @@ public class SC_FPSController : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
+    public override void OnNetworkSpawn()
+    {
+        if (!IsOwner)
+        {
+            enabled = false;
+            return;
+        }
+    }
 
     void Update()
-    {
+    { 
+        OnNetworkSpawn();
         if (!disabled)
         {
             isRunning = Input.GetButton("Joystick4Button8");

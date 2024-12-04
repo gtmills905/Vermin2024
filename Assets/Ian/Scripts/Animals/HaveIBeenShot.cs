@@ -3,7 +3,7 @@ using UnityEngine;
 public class HaveIBeenShot : MonoBehaviour
 {
     public GameManager Manager;
-    public RespawnManager respawnManager;
+    public PlayerSpawner playerSpawner;
     public GameObject impactVFXPrefab; // Assign the VFX prefab in the Inspector
 
     void Start()
@@ -23,7 +23,7 @@ public class HaveIBeenShot : MonoBehaviour
             Destroy(impactVFX, 2f);
 
             Manager.BirdLives += 1;
-            respawnManager.RespawnPlayer();
+            playerSpawner.RespawnPlayer();
         }
     }
 }

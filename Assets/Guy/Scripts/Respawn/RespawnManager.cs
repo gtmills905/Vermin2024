@@ -1,37 +1,35 @@
 using System.Collections;
+using System.Security.Cryptography;
+using System.Threading;
 using UnityEngine;
 
 public class RespawnManager : MonoBehaviour
 {
-    public GameObject player;
-    public GameObject spawnPoint;
-    private bool isRespawning = false;
-    public PickupControl pickupControl;
 
-    public void RespawnPlayer()
+    public Transform[] spawnPoints;
+    
+
+
+    public static RespawnManager instance;
+
+    private void Awake()
     {
-        if (!isRespawning)
+        instance = this;
+    }
+
+    void Start()
+    {
+        foreach(Transform spawn in spawnPoints)
         {
-            isRespawning = true;
-            player.transform.position = spawnPoint.transform.position;
-            player.SetActive(false);
-
-            if (!player.activeSelf)
-            {
-                if (pickupControl != null && pickupControl.currentObject != null)
-                {
-                    Destroy(pickupControl.currentObject.gameObject);
-                }
-            }
-
-            StartCoroutine(ReactivatePlayer());
+            spawn.gameObject.SetActive(false);
         }
     }
 
-    IEnumerator ReactivatePlayer()
+    
+    public Transform GetSpawnPoint()
     {
-        yield return new WaitForSeconds(5f);
-        player.SetActive(true);
-        isRespawning = false;
+        return spawnPoints[Random.Range(0, spawnPoints.Length)];  
     }
+
+  
 }

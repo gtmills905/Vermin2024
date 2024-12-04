@@ -1,7 +1,9 @@
 using System.Runtime.Serialization;
 using UnityEngine;
+using Unity.Netcode;
 
-public class Player3 : MonoBehaviour
+
+public class Player3 : NetworkBehaviour
 {
     private Animator anim;
     private CharacterController controller;
@@ -41,9 +43,18 @@ public class Player3 : MonoBehaviour
         originalForwardSpeed = forwardspeed;
         lastYPosition = transform.position.y;
     }
+    public override void OnNetworkSpawn()
+    {
+        if (!IsOwner)
+        {
+            enabled = false;
+            return;
+        }
+    }
 
     void Update()
     {
+        OnNetworkSpawn();
         string verticalAxis = "Vertical" + characterType.ToString();
 
         float vertical = Input.GetAxis(verticalAxis);
@@ -111,6 +122,7 @@ public class Player3 : MonoBehaviour
         }
 
         AnimalsControlled();
+        
     }
 
     public void AnimalsControlled()
