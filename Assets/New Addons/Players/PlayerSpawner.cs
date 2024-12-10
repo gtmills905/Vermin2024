@@ -22,6 +22,9 @@ public class PlayerSpawner : MonoBehaviour
 
     public GameObject playerPrefab;
     private GameObject player;
+    public GameObject deathEffect;
+
+    public float respawnTime = 5f;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -69,5 +72,29 @@ public class PlayerSpawner : MonoBehaviour
         player.SetActive(true);
         isRespawning = false;
     }
+    public void Die(string damager)
+    {
+        
 
+        UiController.instance.deathText.text = "You were killed by " + damager;
+
+        if (player!= null)
+        {
+            StartCoroutine(DieCo());
+        }
+
+    }
+    public IEnumerator DieCo()
+    {
+        PhotonNetwork.Instantiate(deathEffect.name, player.transform.position, Quaternion.identity);
+
+        PhotonNetwork.Destroy(player);
+        UiController.instance.deathScreen.SetActive(true);
+
+        yield return new WaitForSeconds(respawnTime);
+
+        UiController.instance.deathScreen.SetActive(false);
+
+        SpawnPlayer();
+    }
 }

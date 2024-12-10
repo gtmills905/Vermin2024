@@ -7,5 +7,7 @@ public class Gun : MonoBehaviour
 
     public GameObject muzzleFlash;
 
+    public int shotDamage;
+
 }
 

@@ -3,6 +3,7 @@ using System.Security.Cryptography;
 using System.Threading;
 using UnityEngine;
 using Photon.Pun;
+using System.Collections.Concurrent;
 
 public class FarmerController : MonoBehaviourPunCallbacks
 {
@@ -33,10 +34,11 @@ public class FarmerController : MonoBehaviourPunCallbacks
 
     private bool overheated;
 
-
     public Gun[] allGuns;
     private int selectedGun;
 
+    public int maxHealth = 100;
+    private int currentHealth;
 
     public Transform groundCheckPoint;
     private bool isGrounded;
@@ -44,9 +46,12 @@ public class FarmerController : MonoBehaviourPunCallbacks
 
     public float jumpForce = 12f, gravityMod = 2.5f;
 
+    public GameObject playerHitImpact;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        maxHealth = currentHealth;
         Cursor.lockState = CursorLockMode.Locked;
 
         cam = Camera.main;
@@ -59,6 +64,10 @@ public class FarmerController : MonoBehaviourPunCallbacks
     // Update is called once per frame
     void Update()
     {
+        if (photonView.IsMine)
+        {
+
+
 
             // Mouse input
             mouseInput = new Vector2(Input.GetAxisRaw("Mouse X"), Input.GetAxisRaw("Mouse Y")) * mouseSensitivity;
@@ -210,6 +219,7 @@ public class FarmerController : MonoBehaviourPunCallbacks
                     Cursor.lockState = CursorLockMode.Locked;
                 }
             }
+        }
     }
 
 
@@ -221,11 +231,21 @@ public class FarmerController : MonoBehaviourPunCallbacks
 
         if(Physics.Raycast(ray,out RaycastHit hit))
         {
-            Debug.Log("We hit" + hit.collider.gameObject.name);
+            //Debug.Log("We hit" + hit.collider.gameObject.name);
 
-            GameObject bulletImpactObject = Instantiate(bulletImpact, hit.point + (hit.normal * .002f), Quaternion.LookRotation(hit.normal, Vector3.up));
+            if(hit.collider.gameObject.tag == "Player") 
+            
+            { 
+                PhotonNetwork.Instantiate(playerHitImpact.name, hit.point, Quaternion.identity);
+                hit.collider.gameObject.GetPhotonView().RPC("DealDamage", RpcTarget.All, photonView.Owner.NickName, allGuns[selectedGun].shotDamage);
+            }
+            else
+            {
+                GameObject bulletImpactObject = Instantiate(bulletImpact, hit.point + (hit.normal * .002f), Quaternion.LookRotation(hit.normal, Vector3.up));
 
-            Destroy (bulletImpactObject, 10f );
+                Destroy (bulletImpactObject, 10f );
+            }
+            
         }
 
 
@@ -244,6 +264,32 @@ public class FarmerController : MonoBehaviourPunCallbacks
         allGuns[selectedGun].muzzleFlash.SetActive(true);
         muzzleCounter = muzzleDisplayTime;
     }
+
+    [PunRPC]
+    public void TakeDamage(string damager, int damageAmount)
+    {
+        if (photonView.IsMine)
+        {
+            //Debug.Log(photonView.Owner.NickName + "I've been hit" + damager);
+
+            currentHealth -= damageAmount;
+
+            if (currentHealth <= 0)
+            {
+                currentHealth = 0;
+
+                PlayerSpawner.Instance.Die(damager);
+            }
+        }
+
+
+    }
+
+    public void DealDamage(string damager, int damageAmount)
+    {
+        TakeDamage(damager, damageAmount);
+    }
+
     private void LateUpdate()
     {
         cam.transform.position = viewPoint.position;
