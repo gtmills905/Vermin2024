@@ -44,9 +44,14 @@ public class BirdMovement : MonoBehaviourPunCallbacks
 
     void Start()
     {
-        UiController.instance.healthSlider.maxValue = maxHealth;
+        if (photonView.IsMine)
+        {
+            UiController.instance.healthSlider.maxValue = maxHealth;
+            UiController.instance.healthSlider.value = currentHealth;
+        }
+        
         currentHealth = maxHealth;
-        UiController.instance.healthSlider.value = currentHealth;
+        
 
         playerCamera = Camera.main; // Assign the main camera
         Cursor.lockState = CursorLockMode.Locked; // Lock the cursor to the game screen

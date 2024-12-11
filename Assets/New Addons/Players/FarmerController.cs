@@ -37,9 +37,6 @@ public class FarmerController : MonoBehaviourPunCallbacks
     public Gun[] allGuns;
     private int selectedGun;
 
-    public int maxHealth = 100;
-    private int currentHealth;
-
     public Transform groundCheckPoint;
     private bool isGrounded;
     public LayerMask groundLayers;
@@ -48,10 +45,19 @@ public class FarmerController : MonoBehaviourPunCallbacks
 
     public GameObject playerHitImpact;
 
+    public Animator anim;
+    public GameObject playerModel;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        maxHealth = currentHealth;
+        if (photonView.IsMine)
+        {
+            playerModel.SetActive(true);
+
+        }
+
+        
         Cursor.lockState = CursorLockMode.Locked;
 
         cam = Camera.main;
@@ -205,7 +211,8 @@ public class FarmerController : MonoBehaviourPunCallbacks
                 }
             }
 
-
+            anim.SetBool("grounded", isGrounded);
+            anim.SetFloat("speed", moveDir.magnitude);
 
 
             if (Input.GetKeyDown(KeyCode.Escape))
@@ -265,30 +272,7 @@ public class FarmerController : MonoBehaviourPunCallbacks
         muzzleCounter = muzzleDisplayTime;
     }
 
-    [PunRPC]
-    public void TakeDamage(string damager, int damageAmount)
-    {
-        if (photonView.IsMine)
-        {
-            //Debug.Log(photonView.Owner.NickName + "I've been hit" + damager);
 
-            currentHealth -= damageAmount;
-
-            if (currentHealth <= 0)
-            {
-                currentHealth = 0;
-
-                PlayerSpawner.Instance.Die(damager);
-            }
-        }
-
-
-    }
-
-    public void DealDamage(string damager, int damageAmount)
-    {
-        TakeDamage(damager, damageAmount);
-    }
 
     private void LateUpdate()
     {
