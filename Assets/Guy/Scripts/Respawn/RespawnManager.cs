@@ -7,8 +7,8 @@ public class RespawnManager : MonoBehaviour
 {
 
     public Transform[] spawnPoints;
-    
 
+    public Transform[] farmerSpawnPoints;
 
     public static RespawnManager instance;
 
@@ -23,6 +23,11 @@ public class RespawnManager : MonoBehaviour
         {
             spawn.gameObject.SetActive(false);
         }
+
+        foreach (Transform spawn in farmerSpawnPoints)
+        {
+            spawn.gameObject.SetActive(false);
+        }
     }
 
     
@@ -31,5 +36,9 @@ public class RespawnManager : MonoBehaviour
         return spawnPoints[Random.Range(0, spawnPoints.Length)];  
     }
 
+    public Transform GetFarmerSpawnPoint()
+    {
+        return farmerSpawnPoints[0];
+    }
   
 }

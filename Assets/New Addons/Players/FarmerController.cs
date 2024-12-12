@@ -54,17 +54,17 @@ public class FarmerController : MonoBehaviourPunCallbacks
         if (photonView.IsMine)
         {
             playerModel.SetActive(true);
+            Cursor.lockState = CursorLockMode.Locked;
 
+            cam = Camera.main;
+
+            UiController.instance.weaponTempSlider.maxValue = maxHeat;
+
+            SwitchGun();
         }
 
         
-        Cursor.lockState = CursorLockMode.Locked;
-
-        cam = Camera.main;
-
-        UiController.instance.weaponTempSlider.maxValue = maxHeat;
-
-        SwitchGun();
+        
     }
 
     // Update is called once per frame
@@ -228,7 +228,6 @@ public class FarmerController : MonoBehaviourPunCallbacks
             }
         }
     }
-
 
     private void Shoot()
     {

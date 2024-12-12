@@ -13,7 +13,7 @@ public class Launcher : MonoBehaviourPunCallbacks
 
     public GameObject loadingScreen;
     public TMP_Text loadingText;
-
+    public GameObject title;
     public GameObject menuButtons;
     public GameObject createRoomScreen;
     public TMP_InputField roomNameInput;
@@ -52,6 +52,7 @@ public class Launcher : MonoBehaviourPunCallbacks
     {
         CloseMenus();
 
+       
         loadingScreen.SetActive(true);
         loadingText.text = "Connecting to Network...";
 
@@ -67,6 +68,7 @@ public class Launcher : MonoBehaviourPunCallbacks
         errorScreen.SetActive(false);
         roomBrowserScreen.SetActive(false);
         nameInputScreen.SetActive(false);
+        title.SetActive(false);
     }
 
     public override void OnConnectedToMaster()
@@ -264,8 +266,9 @@ public class Launcher : MonoBehaviourPunCallbacks
         PhotonNetwork.JoinRoom(inputInfo.Name);
 
         CloseMenus();
-        loadingText.text = "Joining Room";
         loadingScreen.SetActive(true);
+        loadingText.text = "Joining Room";
+        
     }
 
     public void SetNickname()
@@ -278,6 +281,7 @@ public class Launcher : MonoBehaviourPunCallbacks
             CloseMenus();
             menuButtons.SetActive(true);
             hasSetNick = true;
+            title.SetActive(true);
         }
     }
     public override void OnMasterClientSwitched(Player newMasterClient)
@@ -291,10 +295,23 @@ public class Launcher : MonoBehaviourPunCallbacks
             startButton.SetActive(false);
         }
     }
-
+    
     public void StartGame()
     {
-        PhotonNetwork.LoadLevel(levelToPlay);
+        if (PhotonNetwork.IsMasterClient)
+        {
+            
+            CloseMenus(); // Close the menu for the master client
+            PhotonNetwork.LoadLevel(levelToPlay); // Load the game level
+            photonView.RPC("CloseMenusForAll", RpcTarget.All); // Close menus for all clients
+            
+        }
+    }
+
+    [PunRPC]
+    public void CloseMenusForAll()
+    {
+        CloseMenus();
     }
     public void QuitGame()
     {

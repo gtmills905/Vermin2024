@@ -46,21 +46,22 @@ public class BirdMovement : MonoBehaviourPunCallbacks
     {
         if (photonView.IsMine)
         {
+            currentHealth = maxHealth;
             UiController.instance.healthSlider.maxValue = maxHealth;
             UiController.instance.healthSlider.value = currentHealth;
+
+            playerCamera = Camera.main; // Assign the main camera
+            Cursor.lockState = CursorLockMode.Locked; // Lock the cursor to the game screen
+            Cursor.visible = false; // Hide the cursor
+
+            characterController = GetComponent<CharacterController>(); // Get the CharacterController
+            Transform newTrans = RespawnManager.instance.GetSpawnPoint();
+            transform.position = newTrans.position;
+            transform.rotation = newTrans.rotation;
+
+
         }
         
-        currentHealth = maxHealth;
-        
-
-        playerCamera = Camera.main; // Assign the main camera
-        Cursor.lockState = CursorLockMode.Locked; // Lock the cursor to the game screen
-        Cursor.visible = false; // Hide the cursor
-
-        characterController = GetComponent<CharacterController>(); // Get the CharacterController
-        Transform newTrans = RespawnManager.instance.GetSpawnPoint();
-        transform.position = newTrans.position;
-        transform.rotation = newTrans.rotation;
     }
 
     void Update()
@@ -197,7 +198,7 @@ public class BirdMovement : MonoBehaviourPunCallbacks
             UiController.instance.healthSlider.value = currentHealth;
         }
     }
-
+    [PunRPC]
     public void DealDamage(string damager, int damageAmount)
     {
         TakeDamage(damager, damageAmount);
