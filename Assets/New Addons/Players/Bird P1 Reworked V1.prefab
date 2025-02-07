@@ -193,7 +193,7 @@ RectTransform:
   m_Father: {fileID: 1527364686525946605}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0.000015258789, y: 0}
   m_SizeDelta: {x: 0.000015259, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -1262,7 +1262,7 @@ RectTransform:
   m_Father: {fileID: 1877883499603999431}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -1318,7 +1318,7 @@ GameObject:
   - component: {fileID: 3479619295006702541}
   - component: {fileID: 1067659567346420017}
   - component: {fileID: 2642318174353917802}
-  - component: {fileID: 4831867316593514088}
+  - component: {fileID: 7177172326196773044}
   - component: {fileID: 2308001949719576374}
   - component: {fileID: 8352171748022339255}
   - component: {fileID: 7058143215952798764}
@@ -1328,7 +1328,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &601772183864196923
 Transform:
   m_ObjectHideFlags: 0
@@ -1388,7 +1388,7 @@ CharacterController:
   m_Enabled: 1
   serializedVersion: 3
   m_Height: 1
-  m_Radius: 0.5
+  m_Radius: 1.11
   m_SlopeLimit: 45
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
@@ -1512,7 +1512,7 @@ MonoBehaviour:
   m_DefaultActionMap: Bird Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
---- !u!114 &4831867316593514088
+--- !u!114 &7177172326196773044
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1524,7 +1524,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 1024967524
+  GlobalObjectIdHash: 4130715685
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
