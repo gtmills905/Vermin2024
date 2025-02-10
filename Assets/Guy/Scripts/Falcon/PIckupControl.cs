@@ -1,65 +1,101 @@
-using System.Diagnostics;
-using System.Runtime.Serialization;
 using UnityEngine;
+using Photon.Pun;
 
-public class PickupControl : MonoBehaviour
+public class PickupControl : MonoBehaviourPunCallbacks
 {
-    public Transform pickupTarget; // This should be the attachment point on the bird
+    public Transform pickupTarget;  // The attachment point on the bird
     public bool animalAttached = false;
-
-    public Rigidbody currentObject;
-
+    private GameObject currentObject; // Store the attached object
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Food"))
+        if (other.CompareTag("Food") && !animalAttached)
         {
-            // Check if an animal is not already attached
-            if (!animalAttached)
-            {
-                // Get the Rigidbody of the collided object's parent
-                Rigidbody targetRigidbody = other.GetComponentInParent<Rigidbody>();
+            PhotonView targetView = other.GetComponentInParent<PhotonView>();
 
-                // Ensure the Rigidbody is not null before proceeding
-                if (targetRigidbody != null)
-                {
-                    currentObject = targetRigidbody;
-                    AttachToObject();
-                    animalAttached = true;
-                }
+            if (targetView != null)
+            {
+                photonView.RPC("AttachToObject", RpcTarget.AllBuffered, targetView.ViewID);
             }
         }
     }
-    void Update()
+
+    [PunRPC]
+    void AttachToObject(int objectId)
     {
-        // Check if the attached object is null
-        if (animalAttached && currentObject == null)
+        // Find the object by its PhotonView ID
+        GameObject targetObject = PhotonView.Find(objectId)?.gameObject;
+
+        if (targetObject == null)
         {
-            animalAttached = false;
+            Debug.LogError($"PickupControl: Could not find object with PhotonView ID {objectId}");
+            return;
         }
+
+        if (pickupTarget == null)
+        {
+            Debug.LogError("PickupControl: Missing pickup target.");
+            return;
+        }
+
+        // Stop pig movement
+        PigWandererUpdated pigWander = targetObject.GetComponent<PigWandererUpdated>();
+        if (pigWander != null)
+        {
+            pigWander.enabled = false;
+        }
+
+        // Re-parent and move the object directly onto the pickup target
+        targetObject.transform.SetParent(pickupTarget, worldPositionStays: false);
+        targetObject.transform.localPosition = Vector3.zero;  // Ensure it snaps to the pickup point
+        targetObject.transform.localRotation = Quaternion.identity; // Reset rotation
+
+        // Sync the current object reference
+        currentObject = targetObject;
+        animalAttached = true;
+
+        Debug.Log("PickupControl: Object attached to pickup target.");
     }
 
-    void FixedUpdate()
+    public void RequestDetach()
     {
-        // If an animal is attached and the currentObject is not null, update its position to match the pickup target
-        if (animalAttached && currentObject != null)
-        {
-            currentObject.MovePosition(pickupTarget.position);
-        }
-    }
-
-    void AttachToObject()
-    {
-        // Check if currentObject is not null
         if (currentObject != null)
         {
-            // Set the object's position relative to the attachment point
-            currentObject.transform.position = pickupTarget.position;
-
-            // Attach the object to the bird without changing its position and rotation
-            currentObject.transform.SetParent(pickupTarget, false);
-
+            photonView.RPC("DetachObject", RpcTarget.AllBuffered);
         }
     }
 
+    [PunRPC]
+    void DetachObject()
+    {
+        if (currentObject == null)
+        {
+            Debug.LogWarning("PickupControl: No object to detach.");
+            return;
+        }
+
+        // Re-enable pig movement
+        PigWandererUpdated pigWander = currentObject.GetComponent<PigWandererUpdated>();
+        if (pigWander != null)
+        {
+            pigWander.enabled = true;
+        }
+
+        // Re-enable physics
+        Rigidbody rb = currentObject.GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            rb.isKinematic = false;
+            rb.constraints = RigidbodyConstraints.None;
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+        }
+
+        // Remove parent (detach)
+        currentObject.transform.SetParent(null, worldPositionStays: true);
+        currentObject = null;
+        animalAttached = false;
+
+        Debug.Log("PickupControl: Object detached.");
+    }
 }

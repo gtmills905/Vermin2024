@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class PigWanderUpdated : MonoBehaviour
+public class PigWandererUpdated : MonoBehaviour
 {
     private float movementSpeed = 3;
     private bool isFree = true;

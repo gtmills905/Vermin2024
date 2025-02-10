@@ -62,7 +62,7 @@ public class BirdMovement : MonoBehaviourPunCallbacks
 
 
         }
-        
+
     }
 
     void Update()
@@ -192,7 +192,6 @@ public class BirdMovement : MonoBehaviourPunCallbacks
         TakeDamage(damager, damageAmount);
     }
 
-
     [PunRPC]
     public void TakeDamage(string damager, int damageAmount)
     {
@@ -201,41 +200,59 @@ public class BirdMovement : MonoBehaviourPunCallbacks
         currentHealth -= damageAmount;
         Debug.Log($"{photonView.Owner.NickName} took {damageAmount} damage. Remaining health: {currentHealth}");
 
+        // Update health slider for the local player
+        if (UiController.instance != null && UiController.instance.healthSlider != null)
+        {
+            UiController.instance.healthSlider.value = currentHealth;
+        }
+
         if (currentHealth <= 0)
         {
             currentHealth = 0;
             photonView.RPC("Die", RpcTarget.All, damager);
         }
-
-        if (UiController.instance != null && UiController.instance.healthSlider != null)
-        {
-            UiController.instance.healthSlider.value = currentHealth;
-        }
     }
+
+
 
     [PunRPC]
     public void Die(string damager)
-    {
+    { 
+        // Notify GameManager that the farmer killed the bird
+        GameManager.Instance.FarmerKill(1); // Update kill count for the farmer (the one who killed the bird)
+
         if (!photonView.IsMine) return; // Only handle death for the local player
 
-        Debug.Log($"{photonView.Owner.NickName} has died!");
+        Debug.Log($"{photonView.Owner.NickName} has died!"); // Log death for the dying player
 
-        // Update UI
-        UiController.instance.deathText.text = "You were killed by " + damager;
+        // Update UI for the dying player only
+        UiController.instance.deathText.text = $"{photonView.Owner.NickName} was killed by {damager}";
         UiController.instance.deathScreen.SetActive(true);
 
-        // Spawn death effect from PlayerSpawner
+        // Spawn death effect
         if (PlayerSpawner.Instance.deathEffect != null)
         {
             PhotonNetwork.Instantiate(PlayerSpawner.Instance.deathEffect.name, transform.position, Quaternion.identity);
         }
 
-        // Notify PlayerSpawner before destroying this object
+        // Notify PlayerSpawner to respawn the player
         PlayerSpawner.Instance.RespawnPlayerAfterDelay();
 
-        // Destroy player object
+        // Destroy the player object (dying player only)
         PhotonNetwork.Destroy(gameObject);
+
+       
     }
 
+
+
+    [PunRPC]
+    public void BroadcastKillToAll(string damager)
+    {
+        if (photonView.IsMine) return; // Prevent repeating the same event on the local player
+
+        // This is for notifying all clients that a kill has occurred
+        GameManager.Instance.FarmerKill(1);  // Update kill count on all clients
+    }
 
 }

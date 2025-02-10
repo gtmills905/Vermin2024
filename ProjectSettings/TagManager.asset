@@ -19,6 +19,11 @@ TagManager:
   - Obstacle
   - Farmer
   - Bullet
+  - UI
+  - Ground
+  - Food
+  - Sea
+  - Nest
   layers:
   - Default
   - TransparentFX

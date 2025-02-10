@@ -105,9 +105,11 @@ public class GameManager : MonoBehaviour
     // Call this method when the farmer kills a bird
     public void FarmerKill(int points)
     {
-        BirdLives += points;
-        UpdateScoreText();
+        BirdLives += points;  // Increment Farmer's score or kills
+        UpdateScoreText();  // Update the UI with the new score
     }
+
+
 
     void UpdateScoreText()
     {

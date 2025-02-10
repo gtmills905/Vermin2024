@@ -1,33 +1,34 @@
-using System;
 using System.Collections;
 using UnityEngine;
+using Photon.Pun; // Include Photon PUN
 
-public class PigSpawnerUpdated : MonoBehaviour
+public class PigSpawnerUpdated : MonoBehaviourPunCallbacks
 {
     public bool CanSpawn = true;
     public GameObject PigPrefab;
     private Vector3 MyPos;
     [SerializeField]
     private int SpawnArea = 1;
-    private const int MaxInitialPigs = 15; // Changed to 7
-    private const int MaxTotalPigs = 20; // Changed to 10
+    private const int MaxInitialPigs = 7;  // Adjusted initial pig count
+    private const int MaxTotalPigs = 10;   // Adjusted max pig count
     private int currentPigCount = 0;
 
-    // Start is called before the first frame update
     void Start()
     {
         MyPos = transform.position;
-        SpawnInitialPigs();
-        StartCoroutine(SpawnPigs());
+
+        if (PhotonNetwork.IsMasterClient) // Only the master client should spawn pigs
+        {
+            SpawnInitialPigs();
+            StartCoroutine(SpawnPigs());
+        }
     }
 
     void SpawnInitialPigs()
     {
         for (int i = 0; i < MaxInitialPigs; i++)
         {
-            GameObject newPig = Instantiate(PigPrefab);
-            newPig.transform.position = new Vector3(MyPos.x + UnityEngine.Random.Range(0, SpawnArea), MyPos.y, MyPos.z + UnityEngine.Random.Range(0, SpawnArea));
-            currentPigCount++;
+            SpawnNewPig();
         }
     }
 
@@ -36,20 +37,20 @@ public class PigSpawnerUpdated : MonoBehaviour
         while (currentPigCount < MaxTotalPigs)
         {
             SpawnNewPig();
-            yield return null; // wait for one frame before spawning next pig
+            yield return new WaitForSeconds(1.0f); // Adjust spawn delay
         }
     }
 
     void SpawnNewPig()
     {
-        if (CanSpawn)
-        {
-            GameObject newPig = Instantiate(PigPrefab);
-            newPig.transform.position = new Vector3(MyPos.x + UnityEngine.Random.Range(0, SpawnArea), MyPos.y, MyPos.z + UnityEngine.Random.Range(0, SpawnArea));
-            currentPigCount++;
-            StartCoroutine(DelayNextSpawn());
-            CanSpawn = false;
-        }
+        if (!CanSpawn || !PhotonNetwork.IsMasterClient) return;
+
+        Vector3 spawnPos = new Vector3(MyPos.x + Random.Range(0, SpawnArea), MyPos.y, MyPos.z + Random.Range(0, SpawnArea));
+
+        GameObject newPig = PhotonNetwork.Instantiate("PigPrefab", spawnPos, Quaternion.identity); // Use PhotonNetwork.Instantiate
+        currentPigCount++;
+        CanSpawn = false;
+        StartCoroutine(DelayNextSpawn());
     }
 
     IEnumerator DelayNextSpawn()
@@ -60,6 +61,8 @@ public class PigSpawnerUpdated : MonoBehaviour
 
     public void PigDestroyed()
     {
+        if (!PhotonNetwork.IsMasterClient) return;
+
         currentPigCount--;
         CanSpawn = true;
     }

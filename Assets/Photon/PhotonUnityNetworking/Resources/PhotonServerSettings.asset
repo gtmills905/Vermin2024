@@ -44,6 +44,10 @@ MonoBehaviour:
   - DealDamage
   - CloseMenusForAll
   - Die
+  - BroadcastKillToAll
+  - AttachObjectOverNetwork
+  - AttachToObject
+  - DetachObject
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0

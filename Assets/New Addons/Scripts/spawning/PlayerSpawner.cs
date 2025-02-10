@@ -21,8 +21,6 @@ public class PlayerSpawner : MonoBehaviourPunCallbacks
         }
     }
 
-    public PickupControl pickupControl;
-
 
     public GameObject playerPrefab;
     private GameObject player;
