@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 33003854527435896}
   - component: {fileID: 23769943492859432}
   - component: {fileID: 64714832402293882}
-  - component: {fileID: -2413571915108320977}
+  - component: {fileID: 4898163694909573243}
   m_Layer: 0
   m_Name: scarecrow
   m_TagString: Untagged
@@ -112,7 +112,7 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 4300000, guid: f6207a411df10429c91811fc33fa43a5, type: 3}
---- !u!114 &-2413571915108320977
+--- !u!114 &4898163694909573243
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -121,22 +121,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 1190210695576588}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 555060749
-  InScenePlacedSourceGlobalObjectIdHash: 0
-  DeferredDespawnTick: 0
-  Ownership: 1
-  AlwaysReplicateAsRoot: 0
-  SynchronizeTransform: 1
-  ActiveSceneSynchronization: 0
-  SceneMigrationSynchronization: 1
-  SpawnWithObservers: 1
-  DontDestroyWithOwner: 0
-  AutoObjectParentSync: 1
-  SyncOwnerTransformWhenParented: 1
-  AllowOwnerToParent: 0
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 0
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!1 &3483653694894864983
 GameObject:
   m_ObjectHideFlags: 0
@@ -268,15 +265,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 312eea9fa2f57b14d964b4269b4edaa4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  slowBirdsActive1: 1
-  slowBirdsActive2: 1
-  slowBirdsActive3: 1
-  SlowingBirds1: 0
-  SlowingBirds2: 0
-  SlowingBirds3: 0
-  player1Component: {fileID: 0}
-  player2Component: {fileID: 0}
-  player3Component: {fileID: 0}
 --- !u!135 &3076593220018835771
 SphereCollider:
   m_ObjectHideFlags: 0

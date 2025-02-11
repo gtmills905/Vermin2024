@@ -4243,7 +4243,8 @@ Transform:
   m_LocalPosition: {x: -0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 9101531398400481862}
   m_Father: {fileID: 6285066515272801602}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!137 &2933424622649235082
@@ -7618,7 +7619,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3105698442152603182}
-  - {fileID: 9101531398400481862}
   - {fileID: 2257792424422901817}
   m_Father: {fileID: 2149444008924824861}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -11148,7 +11148,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 1690699806
+  GlobalObjectIdHash: 4049598044
   InScenePlacedSourceGlobalObjectIdHash: 1676671592
   DeferredDespawnTick: 0
   Ownership: 1
@@ -13497,7 +13497,6 @@ GameObject:
   - component: {fileID: 6700484646524237927}
   - component: {fileID: 3711910041627240573}
   - component: {fileID: 1592238212343930003}
-  - component: {fileID: 9074238677672546943}
   m_Layer: 0
   m_Name: Farmer P4 Animated V2
   m_TagString: Farmer
@@ -13700,31 +13699,6 @@ MonoBehaviour:
   m_SynchronizeRotation: 1
   m_SynchronizeScale: 0
   m_UseLocal: 1
---- !u!114 &9074238677672546943
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7729935323179488050}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 1676671592
-  InScenePlacedSourceGlobalObjectIdHash: 1676671592
-  DeferredDespawnTick: 0
-  Ownership: 1
-  AlwaysReplicateAsRoot: 0
-  SynchronizeTransform: 1
-  ActiveSceneSynchronization: 0
-  SceneMigrationSynchronization: 1
-  SpawnWithObservers: 1
-  DontDestroyWithOwner: 0
-  AutoObjectParentSync: 1
-  SyncOwnerTransformWhenParented: 1
-  AllowOwnerToParent: 0
 --- !u!1 &7809511134467540803
 GameObject:
   m_ObjectHideFlags: 0
@@ -15132,12 +15106,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8692748212765071049}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.000000034676212, y: 0.7071074, z: -0.00000003700338, w: 0.70710605}
-  m_LocalPosition: {x: -17.0509, y: 1.4980193, z: -69.025}
+  m_LocalRotation: {x: 0.000000049157727, y: 0.34202117, z: 0.00000002514751, w: 0.9396922}
+  m_LocalPosition: {x: -0.0016201884, y: 1.7400191, z: 0.20594686}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 7868491433275179841}
+  m_Father: {fileID: 5162966251292583437}
   m_LocalEulerAnglesHint: {x: 90, y: 180, z: 0}
 --- !u!1 &8787985755239943361
 GameObject:
