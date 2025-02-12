@@ -68,7 +68,12 @@ public class Launcher : MonoBehaviourPunCallbacks
         errorScreen.SetActive(false);
         roomBrowserScreen.SetActive(false);
         nameInputScreen.SetActive(false);
-        title.SetActive(false);
+        // Only disable title if not returning to the main menu
+        if (PhotonNetwork.InRoom)
+        {
+            title.SetActive(false);
+        }
+
     }
 
     public override void OnConnectedToMaster()
@@ -176,17 +181,20 @@ public class Launcher : MonoBehaviourPunCallbacks
         errorText.text = "Room creation failed: " + message;
         CloseMenus();
         errorScreen.SetActive(true);
+
     }
     public void CloseErrorScreen()
     {
         CloseMenus();
         menuButtons.SetActive(true);
+        title.SetActive(true);
     }
 
     public override void OnDisconnected(Photon.Realtime.DisconnectCause cause)
     {
         loadingText.text = "Disconnected: " + cause;
         menuButtons.SetActive(true);
+        title.SetActive(true);
     }
     public void LeaveRoom()
     {
@@ -194,11 +202,13 @@ public class Launcher : MonoBehaviourPunCallbacks
         CloseMenus();
         loadingText.text = "Leaving Room";
         loadingScreen.SetActive(true);
+        title.SetActive(true);
     }
     public override void OnLeftRoom()
     {
         CloseMenus();
         menuButtons.SetActive(true);
+        title.SetActive(true);
     }
     public void OpenRoomBrowser()
     {
@@ -209,6 +219,7 @@ public class Launcher : MonoBehaviourPunCallbacks
     {
         CloseMenus();
         menuButtons.SetActive(true);
+        title.SetActive(true);
     }
     public override void OnRoomListUpdate(List<RoomInfo> roomlist)
     {
