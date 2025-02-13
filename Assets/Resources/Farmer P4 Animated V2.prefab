@@ -13608,7 +13608,7 @@ MonoBehaviour:
     type: 3}
   anim: {fileID: 8639489794867115298}
   playerModel: {fileID: 1263717136416133861}
-  GunshotSound: {fileID: 0}
+  GunshotSound: {fileID: 4856780180860161149}
 --- !u!23 &8860912891975181445
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -13713,7 +13713,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 57049852ece14214f91059b5b9567861, type: 3}
   m_Resource: {fileID: 8300000, guid: 57049852ece14214f91059b5b9567861, type: 3}
-  m_PlayOnAwake: 1
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
   Loop: 0
