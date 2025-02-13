@@ -6,7 +6,7 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 0
-    path: Assets/OPackages/Infima Games/Low Poly Shooter Pack - Free Sample/Scenes/S_Content_Overview.unity
+    path: Assets/Packages/Infima Games/Low Poly Shooter Pack - Free Sample/Scenes/S_Content_Overview.unity
     guid: 63fdc04a097eb0b4ba4af78a98dac40d
   - enabled: 0
     path: Assets/Guy/Scenes/GameScenes/Vermin Menu.unity
@@ -14,47 +14,57 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Guy/Scenes/GameScenes/Vermin.unity
     guid: de8b0570971ca0a49990d23d09d0888b
-  - enabled: 1
+  - enabled: 0
     path: Assets/New Addons/Vermin Menu.unity
     guid: 16796a5051f6733428c8504cd164477c
-  - enabled: 1
+  - enabled: 0
     path: Assets/New Addons/Vermin.unity
     guid: abc85e67c82919a41b991b73563131a7
-  - enabled: 1
-    path: Assets/OJunk/Toby/Game scenes/Farmer Win.unity
-    guid: 9f25cce00751e7c48947b050a70408f1
-  - enabled: 1
-    path: Assets/OJunk/Toby/Game scenes/Birds Win.unity
-    guid: 660ae715c1df70e4c854d1d5c7494482
-<<<<<<< Updated upstream
   - enabled: 0
-    path: Assets/Toby/Game scenes/Tie.unity
-=======
-  - enabled: 1
-    path: Assets/OJunk/Toby/Game scenes/Tie.unity
->>>>>>> Stashed changes
+    path: Assets/Junk/Toby/Game scenes/Farmer Win.unity
+    guid: 9f25cce00751e7c48947b050a70408f1
+  - enabled: 0
+    path: Assets/Junk/Toby/Game scenes/Birds Win.unity
+    guid: 660ae715c1df70e4c854d1d5c7494482
+  - enabled: 0
+    path: Assets/Junk/Toby/Game scenes/Tie.unity
     guid: ab95266c0fe232048892a6ba8c2f0595
-  - enabled: 1
+  - enabled: 0
     path: Assets/New Addons/Tie 1.unity
     guid: 3a21093be69e7f9428631d04a1a988ad
-  - enabled: 1
+  - enabled: 0
     path: Assets/New Addons/Farmer Win 1.unity
     guid: de16a4fcdf120c445a78fc49bf8028db
-  - enabled: 1
+  - enabled: 0
     path: Assets/New Addons/Birds Win 1.unity
     guid: 021121bb6f5816f4ea4e10816aa18b61
   - enabled: 1
-    path: Assets/Guy/Scenes/GameScenes/Vermin Tutorial 1.unity
+    path: Assets/OScenes/Vermin Menu.unity
+    guid: 4fc793fe072782249a65692e1e8828c5
+  - enabled: 1
+    path: Assets/OScenes/Vermin Tutorial 1.unity
     guid: e962a2f265691204f817f3debfbb7595
   - enabled: 1
-    path: Assets/Guy/Scenes/GameScenes/Vermin Tutorial 2.unity
+    path: Assets/OScenes/Vermin Tutorial 2.unity
     guid: 647a520ebd164854c9de57dddb0f82e4
   - enabled: 1
-    path: Assets/Guy/Scenes/GameScenes/Vermin Tutorial 3.unity
+    path: Assets/OScenes/Vermin Tutorial 3.unity
     guid: b98cf3ae7bf76734492139920ecde865
   - enabled: 1
-    path: Assets/Guy/Scenes/GameScenes/Vermin Tutorial 4.unity
+    path: Assets/OScenes/Vermin Tutorial 4.unity
     guid: 7de40a99da20cde41a709e31afb22762
+  - enabled: 1
+    path: Assets/OScenes/Birds Win 1.unity
+    guid: f492468199f80d64b8a54f33cce860b6
+  - enabled: 1
+    path: Assets/OScenes/Farmer Win 1.unity
+    guid: 95fdf8a3e4f0c5b4388aecfcb5a6eb92
+  - enabled: 1
+    path: Assets/OScenes/Tie 1.unity
+    guid: 1ad124b129639c24591c6403a74ebbd2
+  - enabled: 1
+    path: Assets/OScenes/Vermin.unity
+    guid: 3875df063ff95874b94ba4762c9cb9b7
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: 9eb07e2d669e9c94e9d7d3c782a916f7,
       type: 2}
