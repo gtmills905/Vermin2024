@@ -297,7 +297,7 @@ public class FarmerController : MonoBehaviourPunCallbacks
     [PunRPC]
     public void SetGun(int gunToSwitchTo)
     {
-        if( gunToSwitchTo > allGuns.Length) 
+        if( gunToSwitchTo < allGuns.Length) 
         {
             selectedGun = gunToSwitchTo;
             SwitchGun();

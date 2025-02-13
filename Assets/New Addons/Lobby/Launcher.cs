@@ -45,7 +45,6 @@ public class Launcher : MonoBehaviourPunCallbacks
             return;
         }
         instance = this;
-        DontDestroyOnLoad(gameObject);
     }
 
     void Start()

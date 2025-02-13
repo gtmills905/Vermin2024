@@ -1,13 +1,10 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-using TMPro;
 using Photon.Pun;
-using System.Collections;
 
 
-
-public class PauseMenu : MonoBehaviour
+public class PauseMenu : MonoBehaviourPunCallbacks
 {
     public GameObject pauseMenuCanvas;
     public Button resumeButton;
@@ -26,6 +23,16 @@ public class PauseMenu : MonoBehaviour
         // Add listeners to buttons
         resumeButton.onClick.AddListener(ResumeGame);
         quitButton.onClick.AddListener(QuitToMenu);
+
+        // Destroy the MainMenuCanvas if the scene is "Vermin"
+        if (SceneManager.GetActiveScene().name == "Vermin")
+        {
+            GameObject mainMenuCanvas = GameObject.FindGameObjectWithTag("MainMenuCanvas");
+            if (mainMenuCanvas != null)
+            {
+                Destroy(mainMenuCanvas);
+            }
+        }
     }
 
     void Update()
@@ -56,7 +63,6 @@ public class PauseMenu : MonoBehaviour
         isPaused = false;
         pauseMenuCanvas.SetActive(false);
         LockCursor();
-
     }
 
     // Method to quit to the main menu
@@ -67,21 +73,29 @@ public class PauseMenu : MonoBehaviour
         // Unlock the cursor before loading the menu
         UnlockCursor();
 
-        
-
         // Then disconnect from Photon if necessary
         if (PhotonNetwork.IsConnected)
         {
-            // Load the menu scene first
-            SceneManager.LoadScene("Vermin Menu");
-            
+            PhotonNetwork.Disconnect();  // Disconnect from Photon
+        }
+        else
+        {
+            LoadMenuScene();  // If not connected, load the menu scene directly
         }
     }
 
+    // Callback for when the Photon client has disconnected
+    public override void OnDisconnected(Photon.Realtime.DisconnectCause cause)
+    {
+        // Load the menu scene after the disconnection is complete
+        LoadMenuScene();
+    }
 
-
-
-
+    private void LoadMenuScene()
+    {
+        // Load the menu scene
+        SceneManager.LoadScene("Vermin Menu");
+    }
 
     private void LockCursor()
     {
