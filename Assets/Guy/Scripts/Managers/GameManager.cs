@@ -70,22 +70,22 @@ public class GameManager : MonoBehaviour
                 // If timer runs out (5 minutes elapsed), determine the winner
                 if (birdScore > BirdLives)
                 {
-                    SceneManager.LoadScene("Birds Win");
+                    SceneManager.LoadScene("Birds Win 1");
                     // You can add more logic here, such as displaying a win screen or triggering other game events.
                 }
                 else if (BirdLives > birdScore)
                 {
-                    SceneManager.LoadScene("Farmer Win");
+                    SceneManager.LoadScene("Farmer Win 1");
                     // You can add more logic here, such as displaying a win screen or triggering other game events.
                 }
                 else if (BirdLives <= 0)
                 {
-                    SceneManager.LoadScene("Farmer Win");
+                    SceneManager.LoadScene("Farmer Win 1");
                     // You can add more logic here, such as displaying a win screen or triggering other game events.
                 }
                 else
                 {
-                    SceneManager.LoadScene("Tie");
+                    SceneManager.LoadScene("Tie 1");
                     // You can add more logic here, such as displaying a win screen or triggering other game events.
                 }
             }
