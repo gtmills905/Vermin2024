@@ -47,6 +47,7 @@ public class FarmerController : MonoBehaviourPunCallbacks
 
     public Animator anim;
     public GameObject playerModel;
+    public AudioSource GunshotSound;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -234,10 +235,12 @@ public class FarmerController : MonoBehaviourPunCallbacks
     {
         Ray ray = cam.ViewportPointToRay(new Vector3(.5f, .5f, 0));
             ray.origin = cam.transform.position;
+        GunshotSound.Play();
 
-
-        if(Physics.Raycast(ray,out RaycastHit hit))
+        if (Physics.Raycast(ray,out RaycastHit hit))
         {
+
+
             //Debug.Log("We hit" + hit.collider.gameObject.name);
 
             if(hit.collider.gameObject.tag == "Player") 
