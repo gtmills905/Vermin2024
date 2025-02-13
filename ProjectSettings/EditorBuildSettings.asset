@@ -39,31 +39,31 @@ EditorBuildSettings:
     path: Assets/New Addons/Birds Win 1.unity
     guid: 021121bb6f5816f4ea4e10816aa18b61
   - enabled: 1
-    path: Assets/OScenes/Vermin Menu.unity
+    path: Assets/New Addons/Scenes/Vermin Menu.unity
     guid: 4fc793fe072782249a65692e1e8828c5
   - enabled: 1
-    path: Assets/OScenes/Vermin Tutorial 1.unity
+    path: Assets/New Addons/Scenes/Vermin Tutorial 1.unity
     guid: e962a2f265691204f817f3debfbb7595
   - enabled: 1
-    path: Assets/OScenes/Vermin Tutorial 2.unity
+    path: Assets/New Addons/Scenes/Vermin Tutorial 2.unity
     guid: 647a520ebd164854c9de57dddb0f82e4
-  - enabled: 1
-    path: Assets/OScenes/Vermin Tutorial 3.unity
+  - enabled: 0
+    path: Assets/New Addons/Scenes/Vermin Tutorial 3.unity
     guid: b98cf3ae7bf76734492139920ecde865
   - enabled: 1
-    path: Assets/OScenes/Vermin Tutorial 4.unity
+    path: Assets/New Addons/Scenes/Vermin Tutorial 4.unity
     guid: 7de40a99da20cde41a709e31afb22762
   - enabled: 1
-    path: Assets/OScenes/Birds Win 1.unity
+    path: Assets/New Addons/Scenes/Birds Win 1.unity
     guid: f492468199f80d64b8a54f33cce860b6
   - enabled: 1
-    path: Assets/OScenes/Farmer Win 1.unity
+    path: Assets/New Addons/Scenes/Farmer Win 1.unity
     guid: 95fdf8a3e4f0c5b4388aecfcb5a6eb92
   - enabled: 1
-    path: Assets/OScenes/Tie 1.unity
+    path: Assets/New Addons/Scenes/Tie 1.unity
     guid: 1ad124b129639c24591c6403a74ebbd2
   - enabled: 1
-    path: Assets/OScenes/Vermin.unity
+    path: Assets/New Addons/Scenes/Vermin.unity
     guid: 3875df063ff95874b94ba4762c9cb9b7
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: 9eb07e2d669e9c94e9d7d3c782a916f7,
