@@ -1,5 +1,6 @@
 using UnityEngine;
 using Photon.Pun;
+using System.Collections;
 
 
 public class BirdMovement : MonoBehaviourPunCallbacks
@@ -19,7 +20,7 @@ public class BirdMovement : MonoBehaviourPunCallbacks
     public bool slowBirdsActive1 = false;
     public int maxAnimalsCarried = 1;
     public SlowBirds slowBirds;
-    public int maxHealth = 100;
+    public int maxHealth = 200;
 
     private int currentHealth;
 
@@ -40,7 +41,7 @@ public class BirdMovement : MonoBehaviourPunCallbacks
 
     private Vector3 desiredPosition;
 
-
+    private bool isRegeneratingHealth = false;
 
 
     void Start()
@@ -60,7 +61,7 @@ public class BirdMovement : MonoBehaviourPunCallbacks
             transform.position = newTrans.position;
             transform.rotation = newTrans.rotation;
 
-
+            StartHealthRegeneration();
         }
 
     }
@@ -255,4 +256,35 @@ public class BirdMovement : MonoBehaviourPunCallbacks
         GameManager.Instance.FarmerKill(1);  // Update kill count on all clients
     }
 
+
+    // Coroutine to regenerate health every 2 seconds
+    private void StartHealthRegeneration()
+    {
+        if (isRegeneratingHealth) return; // Avoid starting multiple coroutines
+
+        isRegeneratingHealth = true;
+        StartCoroutine(RegenerateHealth());
+    }
+
+    // Coroutine that regenerates health
+    private IEnumerator RegenerateHealth()
+    {
+        while (currentHealth < maxHealth)
+        {
+            yield return new WaitForSeconds(2f); // Wait for 2 seconds
+
+            // Regenerate health by 10 (make sure it doesn't exceed maxHealth)
+            currentHealth = Mathf.Min(currentHealth + 10, maxHealth);
+
+            // Update the health slider if it's available
+            if (UiController.instance != null && UiController.instance.healthSlider != null)
+            {
+                UiController.instance.healthSlider.value = currentHealth;
+            }
+
+            Debug.Log($"{photonView.Owner.NickName} regenerated 10 health. Current health: {currentHealth}");
+        }
+
+        isRegeneratingHealth = false; // Stop regenerating once full health is reached
+    }
 }

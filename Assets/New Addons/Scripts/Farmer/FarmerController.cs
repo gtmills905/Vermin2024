@@ -60,7 +60,8 @@ public class FarmerController : MonoBehaviourPunCallbacks
 
             UiController.instance.weaponTempSlider.maxValue = maxHeat;
 
-            SwitchGun();
+            photonView.RPC("SetGun", RpcTarget.All, selectedGun);
+            //SwitchGun();
         }
 
         
@@ -186,7 +187,7 @@ public class FarmerController : MonoBehaviourPunCallbacks
                 {
                     selectedGun = 0;
                 }
-                SwitchGun();
+                photonView.RPC("SetGun", RpcTarget.All, selectedGun);
 
             }
 
@@ -198,7 +199,7 @@ public class FarmerController : MonoBehaviourPunCallbacks
                 {
                     selectedGun = allGuns.Length - 1;
                 }
-                SwitchGun();
+                photonView.RPC("SetGun", RpcTarget.All, selectedGun);
             }
 
             for (int i = 0; i < allGuns.Length; i++)
@@ -207,7 +208,7 @@ public class FarmerController : MonoBehaviourPunCallbacks
                 if (Input.GetKeyDown(KeyCode.Alpha1 + i))
                 {
                     selectedGun = i;
-                    SwitchGun();
+                    photonView.RPC("SetGun", RpcTarget.All, selectedGun);
                 }
             }
 
@@ -289,5 +290,15 @@ public class FarmerController : MonoBehaviourPunCallbacks
         allGuns[selectedGun].gameObject.SetActive(true);
 
         allGuns[selectedGun].muzzleFlash.SetActive(false);
+    }
+    [PunRPC]
+    public void SetGun(int gunToSwitchTo)
+    {
+        if( gunToSwitchTo > allGuns.Length) 
+        {
+            selectedGun = gunToSwitchTo;
+            SwitchGun();
+
+        }
     }
 }

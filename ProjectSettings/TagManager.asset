@@ -24,6 +24,7 @@ TagManager:
   - Food
   - Sea
   - Nest
+  - MainMenuCanvas
   layers:
   - Default
   - TransparentFX

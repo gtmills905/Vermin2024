@@ -1,6 +1,6 @@
 using System.Collections;
 using UnityEngine;
-using Photon.Pun; // Include Photon PUN
+using Photon.Pun; 
 
 public class PigSpawnerUpdated : MonoBehaviourPunCallbacks
 {
@@ -43,15 +43,27 @@ public class PigSpawnerUpdated : MonoBehaviourPunCallbacks
 
     void SpawnNewPig()
     {
+        // Check if spawning is allowed and player is still the Master Client
         if (!CanSpawn || !PhotonNetwork.IsMasterClient) return;
 
+        // Prevent spawning if the player is disconnecting or not in a room
+        if (!PhotonNetwork.InRoom || PhotonNetwork.NetworkClientState != Photon.Realtime.ClientState.Joined)
+        {
+            Debug.LogWarning("Cannot spawn pig - Not in a Photon room!");
+            return;
+        }
+
+        // Generate a spawn position
         Vector3 spawnPos = new Vector3(MyPos.x + Random.Range(0, SpawnArea), MyPos.y, MyPos.z + Random.Range(0, SpawnArea));
 
-        GameObject newPig = PhotonNetwork.Instantiate("PigPrefab", spawnPos, Quaternion.identity); // Use PhotonNetwork.Instantiate
+        // Instantiate the pig using Photon
+        GameObject newPig = PhotonNetwork.Instantiate("PigPrefab", spawnPos, Quaternion.identity);
+
         currentPigCount++;
         CanSpawn = false;
         StartCoroutine(DelayNextSpawn());
     }
+
 
     IEnumerator DelayNextSpawn()
     {

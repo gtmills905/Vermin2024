@@ -52,14 +52,23 @@ public class Launcher : MonoBehaviourPunCallbacks
     {
         CloseMenus();
 
-       
+
         loadingScreen.SetActive(true);
         loadingText.text = "Connecting to Network...";
 
-        PhotonNetwork.ConnectUsingSettings();
+        // Check if the Photon Network is already connected
+        if (PhotonNetwork.IsConnected)
+        {
+            Debug.Log("Already connected to Photon.");
+        }
+        else
+        {
+            Debug.Log("Connecting to Photon...");
+            PhotonNetwork.ConnectUsingSettings();  // Connect to Photon if not already connected
+        }
     }
 
-    void CloseMenus()
+        void CloseMenus()
     {
         if (loadingScreen) loadingScreen.SetActive(false);
         if (menuButtons) menuButtons.SetActive(false);

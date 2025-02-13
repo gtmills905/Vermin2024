@@ -274,9 +274,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 32c7b99f87cff9246acb3411bf3f3765, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 10
-  turnSpeed: 50
-  verticalSpeed: 10
+  moveSpeed: 15
+  turnSpeed: 55
+  verticalSpeed: 15
   cameraOffset: {x: 0, y: 0, z: 10}
   maxPitchAngle: 89
   wingTiltAngle: 30
