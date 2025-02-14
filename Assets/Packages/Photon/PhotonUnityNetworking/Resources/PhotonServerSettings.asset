@@ -52,6 +52,7 @@ MonoBehaviour:
   - SyncArmRotation
   - SyncArmsRotation
   - StartHealthRegeneration
+  - AnimalDeposited
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0
