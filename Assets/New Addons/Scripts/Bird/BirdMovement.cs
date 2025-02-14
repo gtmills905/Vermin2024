@@ -63,6 +63,11 @@ public class BirdMovement : MonoBehaviourPunCallbacks
 
             StartHealthRegeneration();
         }
+        if (!photonView.IsMine)
+        {
+            enabled = false;
+        }
+
 
     }
 
@@ -256,7 +261,7 @@ public class BirdMovement : MonoBehaviourPunCallbacks
         GameManager.Instance.FarmerKill(1);  // Update kill count on all clients
     }
 
-
+    [PunRPC]
     // Coroutine to regenerate health every 2 seconds
     private void StartHealthRegeneration()
     {

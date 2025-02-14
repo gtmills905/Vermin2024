@@ -7,7 +7,7 @@ using System.Collections.Concurrent;
 
 public class FarmerController : MonoBehaviourPunCallbacks
 {
-
+    
     public Transform viewPoint;
     public float mouseSensitivity = 1f;
     private float verticalRotStore;
