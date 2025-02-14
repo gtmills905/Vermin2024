@@ -64,6 +64,11 @@ public class PickupControl : MonoBehaviourPunCallbacks
             photonView.RPC("DetachObject", RpcTarget.AllBuffered);
         }
     }
+    [PunRPC]
+    public void AnimalDeposited()
+    {
+        animalAttached = false;
+    }
 
     [PunRPC]
     void DetachObject()
