@@ -68,8 +68,26 @@ public class PlayerSpawner : MonoBehaviourPunCallbacks
 
         Transform farmerSpawnPoint = RespawnManager.instance.GetFarmerSpawnPoint();
         farmer = PhotonNetwork.Instantiate(farmerPrefab.name, farmerSpawnPoint.position, farmerSpawnPoint.rotation);
+
         CheckPlayerTag(farmer);
+
+        // Disable Main Camera for Player 2 if they are the Farmer
+        PhotonView farmerView = farmer.GetComponent<PhotonView>();
+        if (farmerView != null && farmerView.IsMine) // Check if this is the local player's farmer
+        {
+            DisableMainCamera();
+        }
     }
+
+    private void DisableMainCamera()
+    {
+        GameObject mainCamera = GameObject.Find("Main Camera"); // Find the camera by name
+        if (mainCamera != null)
+        {
+            mainCamera.SetActive(false); // Disable it
+        }
+    }
+
 
     public void RespawnPlayerAfterDelay()
     {

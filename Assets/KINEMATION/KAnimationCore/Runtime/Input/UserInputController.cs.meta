@@ -1,0 +1,19 @@
+fileFormatVersion: 2
+guid: 26b2896c936d4be59e98d9bf358c5a96
+AssetOrigin:
+  serializedVersion: 1
+  productId: 238641
+  packageName: FPS Animation Framework
+  packageVersion: 4.7.3
+  assetPath: Assets/KINEMATION/KAnimationCore/Runtime/Input/UserInputController.cs
+  uploadId: 723277
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - inputConfig: {fileID: 11400000, guid: 022095d8cf55fba4080ab3e4c1364954, type: 2}
+  executionOrder: 0
+  icon: {fileID: 2800000, guid: 6fd4d99d3a1edc7408fe599214be6059, type: 3}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
