@@ -6,6 +6,7 @@ using KINEMATION.KAnimationCore.Runtime.Input;
 
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Photon.Pun;
 
 namespace Demo.Scripts.Runtime.Character
 {
@@ -27,6 +28,7 @@ namespace Demo.Scripts.Runtime.Character
     
     public class FPSMovement : MonoBehaviour
     {
+        private PhotonView photonView;
         public delegate bool ActionConditionDelegate();
         public delegate void OnActionCallback();
         
@@ -398,6 +400,7 @@ namespace Demo.Scripts.Runtime.Character
 
         private void Start()
         {
+            photonView = GetComponent<PhotonView>();
             _controller = GetComponent<CharacterController>();
             _inputController = GetComponent<UserInputController>();
             _animator = GetComponent<Animator>();
@@ -413,46 +416,52 @@ namespace Demo.Scripts.Runtime.Character
         
         private void Update()
         {
-            UpdateMovementState();
-            
-            if (_cachedMovementState != MovementState)
+            if (photonView.IsMine)
             {
-                OnMovementStateChanged();
-            }
 
-            bool isMoving = IsMoving();
-            
-            if (_wasMoving != isMoving)
-            {
-                if (isMoving)
+
+
+                UpdateMovementState();
+
+                if (_cachedMovementState != MovementState)
                 {
-                    onStartMoving?.Invoke();
+                    OnMovementStateChanged();
+                }
+
+                bool isMoving = IsMoving();
+
+                if (_wasMoving != isMoving)
+                {
+                    if (isMoving)
+                    {
+                        onStartMoving?.Invoke();
+                    }
+                    else
+                    {
+                        onStopMoving?.Invoke();
+                    }
+                }
+
+                _wasMoving = isMoving;
+
+                if (MovementState == FPSMovementState.InAir)
+                {
+                    UpdateInAir();
+                }
+                else if (MovementState == FPSMovementState.Sliding)
+                {
+                    UpdateSliding();
                 }
                 else
                 {
-                    onStopMoving?.Invoke();
+                    UpdateGrounded();
                 }
-            }
-            
-            _wasMoving = isMoving;
 
-            if (MovementState == FPSMovementState.InAir)
-            {
-                UpdateInAir();
-            }
-            else if (MovementState == FPSMovementState.Sliding)
-            {
-                UpdateSliding();
-            }
-            else
-            {
-                UpdateGrounded();
-            }
+                UpdateMovement();
+                UpdateAnimatorParams();
 
-            UpdateMovement();
-            UpdateAnimatorParams();
-
-            _cachedMovementState = MovementState;
+                _cachedMovementState = MovementState;
+            }
         }
 
         private void LateUpdate()
