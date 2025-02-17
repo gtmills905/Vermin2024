@@ -8,6 +8,6 @@ public class Gun : MonoBehaviour
     public GameObject muzzleFlash;
 
     public int shotDamage;
-
+    public float gunRange = 1000.0f;
 }
 
