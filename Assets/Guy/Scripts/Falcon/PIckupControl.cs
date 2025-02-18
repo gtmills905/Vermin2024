@@ -1,19 +1,20 @@
 using UnityEngine;
 using Photon.Pun;
+using System.Collections;
 
 public class PickupControl : MonoBehaviourPunCallbacks
 {
     public Transform pickupTarget;  // The attachment point on the bird
     public bool animalAttached = false;
-    private GameObject currentObject; // Store the attached object
+    public GameObject currentObject; // Store the attached object
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Food") && !animalAttached)
+        if (other.CompareTag("Food") && !animalAttached)  // Prevent picking up more than one pig
         {
             PhotonView targetView = other.GetComponentInParent<PhotonView>();
 
-            if (targetView != null)
+            if (targetView != null && !animalAttached)  // Double-check here for safety
             {
                 photonView.RPC("AttachToObject", RpcTarget.AllBuffered, targetView.ViewID);
             }
@@ -36,6 +37,14 @@ public class PickupControl : MonoBehaviourPunCallbacks
         {
             Debug.LogError("PickupControl: Missing pickup target.");
             return;
+        }
+
+        // Transfer ownership to the local player if necessary
+        PhotonView targetPhotonView = targetObject.GetComponent<PhotonView>();
+        if (targetPhotonView != null && !targetPhotonView.IsMine)
+        {
+            targetPhotonView.TransferOwnership(PhotonNetwork.LocalPlayer);  // Transfer ownership
+            Debug.Log($"PickupControl: Ownership of {targetObject.name} transferred to {PhotonNetwork.LocalPlayer.NickName}.");
         }
 
         // Stop pig movement
@@ -61,46 +70,75 @@ public class PickupControl : MonoBehaviourPunCallbacks
     {
         if (currentObject != null)
         {
-            photonView.RPC("DetachObject", RpcTarget.AllBuffered);
+            photonView.RPC("DestroyAttachedPig", RpcTarget.AllBuffered);
         }
     }
+
+    [PunRPC]
+    public void DestroyAttachedPig()
+    {
+        if (currentObject == null)
+        {
+            Debug.LogWarning("PickupControl: No object to destroy.");
+            return;
+        }
+
+        PhotonView pigPhotonView = currentObject.GetComponent<PhotonView>();
+        if (pigPhotonView != null)
+        {
+            // Ensure the local player has ownership before destroying
+            if (!pigPhotonView.IsMine)
+            {
+                // Transfer ownership before destroying
+                pigPhotonView.TransferOwnership(PhotonNetwork.LocalPlayer);
+                Debug.Log($"PickupControl: Ownership of {currentObject.name} transferred to {PhotonNetwork.LocalPlayer.NickName}.");
+            }
+
+            // Destroy the object across the network
+            PhotonNetwork.Destroy(currentObject);  // Destroys the object across all clients
+            Debug.Log("PickupControl: Attached pig destroyed.");
+        }
+        else
+        {
+            Debug.LogError("PickupControl: No PhotonView found on the object.");
+        }
+
+        // Reset the bird's state
+        currentObject = null;
+        animalAttached = false;
+
+        // After destroying or deactivating the object, now trigger the player's death if needed.
+        StartCoroutine(DelayPlayerDeath());
+    }
+
+    // Coroutine to delay player death
+    private IEnumerator DelayPlayerDeath()
+    {
+        // Wait for a frame to allow the destruction process to complete
+        yield return null;
+
+        // Trigger player death
+        BirdMovement birdMovement = GetComponent<BirdMovement>();
+        if (birdMovement != null)
+        {
+            birdMovement.Die("Player has died.");
+        }
+
+        Debug.Log("Player death triggered after object destruction.");
+    }
+
     [PunRPC]
     public void AnimalDeposited()
     {
         animalAttached = false;
-    }
-
-    [PunRPC]
-    void DetachObject()
-    {
-        if (currentObject == null)
-        {
-            Debug.LogWarning("PickupControl: No object to detach.");
-            return;
-        }
-
-        // Re-enable pig movement
-        PigWandererUpdated pigWander = currentObject.GetComponent<PigWandererUpdated>();
-        if (pigWander != null)
-        {
-            pigWander.enabled = true;
-        }
-
-        // Re-enable physics
-        Rigidbody rb = currentObject.GetComponent<Rigidbody>();
-        if (rb != null)
-        {
-            rb.isKinematic = false;
-            rb.constraints = RigidbodyConstraints.None;
-            rb.linearVelocity = Vector3.zero;
-            rb.angularVelocity = Vector3.zero;
-        }
-
-        // Remove parent (detach)
-        currentObject.transform.SetParent(null, worldPositionStays: true);
         currentObject = null;
-        animalAttached = false;
+        Debug.Log("PickupControl: Animal deposited. Ready to pick up another.");
 
-        Debug.Log("PickupControl: Object detached.");
+        // Notify BirdMovement to reset speeds after depositing the animal
+        BirdMovement birdMovement = GetComponent<BirdMovement>();
+        if (birdMovement != null && !birdMovement.inZone)
+        {
+            birdMovement.ResetSpeeds();
+        }
     }
 }

@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 3365845932702674310}
   - component: {fileID: 7023634300763872464}
   - component: {fileID: 6903976512922476549}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: PigPrefab
   m_TagString: Food
   m_Icon: {fileID: 0}
@@ -102,8 +102,8 @@ MonoBehaviour:
   ObservedComponentsFoldoutOpen: 1
   Group: 0
   prefixField: -1
-  Synchronization: 3
-  OwnershipTransfer: 0
+  Synchronization: 1
+  OwnershipTransfer: 1
   observableSearch: 2
   ObservedComponents:
   - {fileID: 6903976512922476549}
@@ -141,7 +141,7 @@ GameObject:
   - component: {fileID: 6157040154106797645}
   - component: {fileID: 9114812626639625749}
   - component: {fileID: 2969972674035658420}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Target (6)
   m_TagString: Food
   m_Icon: {fileID: 0}
@@ -281,7 +281,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64179f3720bbfe947b7724caa67b7c1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_SynchronizeVelocity: 1
+  m_SynchronizeVelocity: 0
   m_SynchronizeAngularVelocity: 0
   m_TeleportEnabled: 0
   m_TeleportIfDistanceGreaterThan: 3

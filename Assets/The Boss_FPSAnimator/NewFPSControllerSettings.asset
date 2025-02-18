@@ -28,4 +28,4 @@ MonoBehaviour:
     index: -1
     isVirtual: 0
   weaponPrefabs:
-  - {fileID: 4215866676285189962, guid: 062ef473a1615ff47b946380533c59e5, type: 3}
+  - {fileID: 4215866676285189962, guid: ce0629ed4725b9b408b3a5fc7f25f9e6, type: 3}

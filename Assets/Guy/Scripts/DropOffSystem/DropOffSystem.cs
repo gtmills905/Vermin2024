@@ -1,7 +1,7 @@
-using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Photon.Pun;
+using System.Collections;
 
 public class DropOffSystem : MonoBehaviourPunCallbacks
 {
@@ -18,25 +18,37 @@ public class DropOffSystem : MonoBehaviourPunCallbacks
             audioSource.Play();
             UniversalDepositObject();
 
-            // Find the player who owns this object
-            PhotonView pigPhotonView = other.GetComponent<PhotonView>();
-            if (pigPhotonView != null && pigPhotonView.Owner != null)
-            {
-                // Find the PickupControl of the owner
                 foreach (var player in FindObjectsOfType<PickupControl>())
                 {
-                    if (player.photonView.Owner == pigPhotonView.Owner)
-                    {
-                        player.photonView.RPC("AnimalDeposited", player.photonView.Owner);
-                        break;
-                    }
-                }
-            }
+                        if (player.photonView.IsMine)
+                        {
+                            player.photonView.RPC("AnimalDeposited", RpcTarget.All);
+                            break;
+                        }
 
-            Destroy(other.gameObject);
+
+                    
+                    
+                }
+            
+            
+
+            StartCoroutine(DestroyPigWithDelay(other.gameObject));
             pigSpawnerUpdated.PigDestroyed();
         }
     }
+
+    private IEnumerator DestroyPigWithDelay(GameObject pig)
+    {
+        yield return new WaitForSeconds(0.1f);
+        PhotonView pigPhotonView = pig.GetComponent<PhotonView>();
+        if (pigPhotonView != null && pigPhotonView.IsMine)
+        {
+            PhotonNetwork.Destroy(pig);
+        }
+    }
+
+
 
     public void UniversalDepositObject()
     {

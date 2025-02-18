@@ -88,20 +88,34 @@ public class BirdMovement : MonoBehaviourPunCallbacks
     {
         moveDirection = Vector3.zero;
 
-        // Forward movement
+        // Forward and backward movement
         if (Input.GetKey(KeyCode.W))
         {
             moveDirection += transform.forward * moveSpeed;
         }
+        if (Input.GetKey(KeyCode.S))
+        {
+            moveDirection -= transform.forward * moveSpeed;
+        }
 
-        // Ascend (Space) or Descend (S)
+        // Left and right strafing
+        if (Input.GetKey(KeyCode.A))
+        {
+            moveDirection -= transform.right * moveSpeed;
+        }
+        if (Input.GetKey(KeyCode.D))
+        {
+            moveDirection += transform.right * moveSpeed;
+        }
+
+        // Ascend (Space) and descend (E)
         if (Input.GetKey(KeyCode.Space))
         {
             moveDirection += Vector3.up * verticalSpeed;
         }
-        else if (Input.GetKey(KeyCode.S))
+        if (Input.GetKey(KeyCode.E))
         {
-            moveDirection += Vector3.down * verticalSpeed;
+            moveDirection -= Vector3.up * verticalSpeed;
         }
 
         // Apply gravity
@@ -110,6 +124,7 @@ public class BirdMovement : MonoBehaviourPunCallbacks
         // Move the CharacterController
         characterController.Move(moveDirection * Time.deltaTime);
     }
+
 
     void HandleRotation()
     {
@@ -223,7 +238,7 @@ public class BirdMovement : MonoBehaviourPunCallbacks
 
     [PunRPC]
     public void Die(string damager)
-    { 
+    {
         // Notify GameManager that the farmer killed the bird
         GameManager.Instance.FarmerKill(1); // Update kill count for the farmer (the one who killed the bird)
 
@@ -241,14 +256,36 @@ public class BirdMovement : MonoBehaviourPunCallbacks
             PhotonNetwork.Instantiate(PlayerSpawner.Instance.deathEffect.name, transform.position, Quaternion.identity);
         }
 
+        // Check if an animal (pig) is attached and destroy it along with detachment
+        PickupControl pickupControl = GetComponent<PickupControl>(); // Assuming PickupControl is on the same GameObject
+        if (pickupControl.currentObject != null)
+        {
+            PhotonView currentObjectPhotonView = pickupControl.currentObject.GetPhotonView();
+
+            // Ensure no ownership transfer happens when destroying
+            if (currentObjectPhotonView.IsMine)
+            {
+                PhotonNetwork.Destroy(pickupControl.currentObject);  // Destroy owned object
+            }
+            else
+            {
+                // Destroy the object but prevent ownership transfer
+                PhotonNetwork.Destroy(pickupControl.currentObject);
+            }
+
+            // Log to confirm destruction
+            Debug.Log("Pig (Food) destroyed.");
+        }
+
         // Notify PlayerSpawner to respawn the player
         PlayerSpawner.Instance.RespawnPlayerAfterDelay();
 
         // Destroy the player object (dying player only)
         PhotonNetwork.Destroy(gameObject);
-
-       
     }
+
+
+
 
 
 

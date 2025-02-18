@@ -343,7 +343,7 @@ namespace Demo.Scripts.Runtime.Character
 
 
         private float lastShotTime = 0f;
-        private float shotDelay = 3f; // 2 seconds delay
+        private float shotDelay = 1.5f; // 2 seconds delay
 
         private void Shoot()
         {
@@ -354,7 +354,12 @@ namespace Demo.Scripts.Runtime.Character
 
             Ray ray = cam.ViewportPointToRay(new Vector3(.5f, .5f, 0));
             ray.origin = cam.transform.position;
-            GunshotSound.Play();
+            // Use RPC to synchronize the gunshot sound
+            if (photonView.IsMine) // Only the local player sends the RPC
+            {
+                photonView.RPC("RPC_PlayGunshotSound", RpcTarget.All);
+            }
+            
 
             if (Physics.Raycast(ray, out RaycastHit hit))
             {
@@ -370,7 +375,12 @@ namespace Demo.Scripts.Runtime.Character
                 }
             }
         }
-
+        // RPC to play gunshot sound across all players
+        [PunRPC]
+        void RPC_PlayGunshotSound()
+        {
+            GunshotSound.Play();
+        }
 
 
 #if ENABLE_INPUT_SYSTEM

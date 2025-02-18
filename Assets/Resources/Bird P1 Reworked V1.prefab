@@ -461,6 +461,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pickupTarget: {fileID: 1039701330561396164}
   animalAttached: 0
+  currentObject: {fileID: 0}
 --- !u!1 &1404879039469108932
 GameObject:
   m_ObjectHideFlags: 0

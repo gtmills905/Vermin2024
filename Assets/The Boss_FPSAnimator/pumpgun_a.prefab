@@ -287,7 +287,7 @@ MonoBehaviour:
   recoilPatternSettings: {fileID: 11400000, guid: f828d6d423a942146839c52d2c7bdb1f,
     type: 2}
   cameraShake: {fileID: 11400000, guid: 5563e5a81879bf3488e215990ceb8724, type: 2}
-  fireRate: 30
+  fireRate: 45
   supportsAuto: 0
   supportsBurst: 0
   burstLength: 0
