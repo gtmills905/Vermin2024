@@ -237,10 +237,8 @@ public class FarmerController : MonoBehaviourPunCallbacks
             ray.origin = cam.transform.position;
         GunshotSound.Play();
 
-        if (Physics.Raycast(ray,out RaycastHit hit))
+        if (Physics.Raycast(ray,out RaycastHit hit, allGuns[selectedGun].gunRange))
         {
-
-
             //Debug.Log("We hit" + hit.collider.gameObject.name);
 
             if(hit.collider.gameObject.tag == "Player") 
