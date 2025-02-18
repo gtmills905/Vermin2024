@@ -40,13 +40,20 @@ public class DropOffSystem : MonoBehaviourPunCallbacks
 
     private IEnumerator DestroyPigWithDelay(GameObject pig)
     {
+        pig.SetActive(false); // Immediately disable the pig to prevent interactions
         yield return new WaitForSeconds(0.1f);
-        PhotonView pigPhotonView = pig.GetComponent<PhotonView>();
-        if (pigPhotonView != null && pigPhotonView.IsMine)
+
+        if (pig != null)
         {
-            PhotonNetwork.Destroy(pig);
+            PhotonView pigPhotonView = pig.GetComponent<PhotonView>();
+            if (pigPhotonView != null && pigPhotonView.IsMine)
+            {
+                PhotonNetwork.Destroy(pig);
+            }
         }
     }
+
+
 
 
 
