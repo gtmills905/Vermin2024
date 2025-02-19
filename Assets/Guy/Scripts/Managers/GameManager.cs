@@ -61,7 +61,7 @@ public class GameManager : MonoBehaviour
         if (timer <= 0f)
         {
             // Check if birdScore and BirdLives are complementary out of 10
-            if (birdScore + BirdLives == 10)
+            if (birdScore + BirdLives == 10 || birdScore + BirdLives == 0)
             {
                 SceneManager.LoadScene("Tie");
             }

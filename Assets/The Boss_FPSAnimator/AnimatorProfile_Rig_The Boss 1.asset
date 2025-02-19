@@ -142,7 +142,7 @@ MonoBehaviour:
     name: mixamorig:Hips
     index: 0
     isVirtual: 0
-  angleThreshold: 90
+  angleThreshold: 5
   turnCurve:
     serializedVersion: 2
     m_Curve:

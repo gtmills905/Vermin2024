@@ -113,7 +113,7 @@ public class BirdMovement : MonoBehaviourPunCallbacks
         {
             moveDirection += Vector3.up * verticalSpeed;
         }
-        if (Input.GetKey(KeyCode.E))
+        if (Input.GetKey(KeyCode.LeftShift))
         {
             moveDirection -= Vector3.up * verticalSpeed;
         }
@@ -242,7 +242,8 @@ public class BirdMovement : MonoBehaviourPunCallbacks
         // Notify GameManager that the farmer killed the bird
         GameManager.Instance.FarmerKill(1); // Update kill count for the farmer (the one who killed the bird)
 
-        if (!photonView.IsMine) return; // Only handle death for the local player
+        // Only handle death for the local player
+        if (!photonView.IsMine) return;
 
         Debug.Log($"{photonView.Owner.NickName} has died!"); // Log death for the dying player
 
@@ -258,23 +259,31 @@ public class BirdMovement : MonoBehaviourPunCallbacks
 
         // Check if an animal (pig) is attached and destroy it along with detachment
         PickupControl pickupControl = GetComponent<PickupControl>(); // Assuming PickupControl is on the same GameObject
-        if (pickupControl.currentObject != null)
+        if (pickupControl != null && pickupControl.currentObject != null)
         {
             PhotonView currentObjectPhotonView = pickupControl.currentObject.GetPhotonView();
 
-            // Ensure no ownership transfer happens when destroying
-            if (currentObjectPhotonView.IsMine)
+            // If this object isn't owned by the local player, transfer ownership to them
+            if (!currentObjectPhotonView.IsMine)
             {
-                PhotonNetwork.Destroy(pickupControl.currentObject);  // Destroy owned object
-            }
-            else
-            {
-                // Destroy the object but prevent ownership transfer
-                PhotonNetwork.Destroy(pickupControl.currentObject);
+                currentObjectPhotonView.TransferOwnership(PhotonNetwork.LocalPlayer);
+                Debug.Log("Ownership of the pig transferred.");
             }
 
-            // Log to confirm destruction
+            // If this object isn't owned by the local player and the player is not MasterClient, let MasterClient handle the destruction
+            if (!currentObjectPhotonView.IsMine && !PhotonNetwork.IsMasterClient)
+            {
+                Debug.LogWarning("Pig is not owned by this client, passing destruction to MasterClient.");
+                return; // Avoid trying to destroy the object, as MasterClient will handle it
+            }
+
+            // Now that the local player owns the object, destroy it
+            PhotonNetwork.Destroy(pickupControl.currentObject);
             Debug.Log("Pig (Food) destroyed.");
+        }
+        else
+        {
+            Debug.LogWarning("No pig or object attached to player.");
         }
 
         // Notify PlayerSpawner to respawn the player
@@ -283,6 +292,10 @@ public class BirdMovement : MonoBehaviourPunCallbacks
         // Destroy the player object (dying player only)
         PhotonNetwork.Destroy(gameObject);
     }
+
+
+
+
 
 
 
