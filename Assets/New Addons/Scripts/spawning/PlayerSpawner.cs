@@ -37,6 +37,8 @@ public class PlayerSpawner : MonoBehaviourPunCallbacks
         {
             // Randomize spawn type: either "Farmer" or something else
             SpawnRandomPlayer();
+            PhotonNetwork.AutomaticallySyncScene = true;
+
         }
     }
 
@@ -79,17 +81,49 @@ public class PlayerSpawner : MonoBehaviourPunCallbacks
         if (otherPlayer.ActorNumber == GetFarmerActorNumber())
         {
             Debug.Log("Farmer has disconnected. Assigning a new farmer...");
-            SetFarmerActorNumber(0);
+            SetFarmerActorNumber(0); // Reset farmer role
 
-            // Assign a new farmer — let the MasterClient decide
+            // Assign a new farmer — MasterClient takes over
             if (PhotonNetwork.IsMasterClient && PhotonNetwork.PlayerList.Length > 0)
             {
-                int newFarmerActorNumber = PhotonNetwork.PlayerList[0].ActorNumber;
+                int newFarmerActorNumber = PhotonNetwork.LocalPlayer.ActorNumber;
                 SetFarmerActorNumber(newFarmerActorNumber);
                 RaiseFarmerEvent(newFarmerActorNumber);
+
+                // Transfer ownership of pigs and scarecrow to the new Farmer
+                TransferFarmObjectsOwnership();
             }
         }
     }
+    private void TransferFarmObjectsOwnership()
+    {
+        // Find all pig and scarecrow objects (or whatever the Farmer controls)
+        GameObject[] pigs = GameObject.FindGameObjectsWithTag("Food");
+        GameObject scarecrow = GameObject.FindWithTag("Scarecrow");
+
+        // Transfer ownership to the new Farmer (MasterClient now)
+        foreach (GameObject pig in pigs)
+        {
+            PhotonView pigView = pig.GetComponent<PhotonView>();
+            if (pigView != null && !pigView.IsMine)
+            {
+                pigView.TransferOwnership(PhotonNetwork.LocalPlayer);
+            }
+        }
+
+        if (scarecrow != null)
+        {
+            PhotonView scarecrowView = scarecrow.GetComponent<PhotonView>();
+            if (scarecrowView != null && !scarecrowView.IsMine)
+            {
+                scarecrowView.TransferOwnership(PhotonNetwork.LocalPlayer);
+            }
+        }
+
+        Debug.Log("Farm objects ownership transferred to the new Farmer!");
+    }
+
+
 
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
@@ -98,19 +132,58 @@ public class PlayerSpawner : MonoBehaviourPunCallbacks
         // Sync farmer status with the joining player
         int farmerActorNumber = GetFarmerActorNumber();
 
-        if (farmerActorNumber == 0 && PhotonNetwork.IsMasterClient)
+        if (newPlayer.ActorNumber == farmerActorNumber)
         {
-            // If no farmer is assigned, assign the new player as the farmer
-            SetFarmerActorNumber(newPlayer.ActorNumber);
-            RaiseFarmerEvent(newPlayer.ActorNumber);
+            photonView.RPC("RPC_SpawnFarmerForNewPlayer", newPlayer);
+        }
+        else
+        {
+            photonView.RPC("RPC_SpawnPlayerForNewPlayer", newPlayer);
         }
     }
 
+    [PunRPC]
+    void RPC_SpawnFarmerForNewPlayer()
+    {
+        SpawnFarmer();
+    }
+
+    [PunRPC]
+    void RPC_SpawnPlayerForNewPlayer()
+    {
+        SpawnPlayer();
+    }
 
 
+    public override void OnJoinedRoom()
+    {
+        base.OnJoinedRoom();
 
+        // Spawn yourself based on role
+        int farmerActorNumber = GetFarmerActorNumber();
 
+        if (PhotonNetwork.LocalPlayer.ActorNumber == farmerActorNumber)
+        {
+            SpawnFarmer();
+        }
+        else
+        {
+            SpawnPlayer();
+        }
 
+        // Sync existing players with the new joiner
+        foreach (Player player in PhotonNetwork.PlayerListOthers)
+        {
+            if (player.ActorNumber == farmerActorNumber)
+            {
+                photonView.RPC("RPC_SpawnFarmerForNewPlayer", PhotonNetwork.LocalPlayer);
+            }
+            else
+            {
+                photonView.RPC("RPC_SpawnPlayerForNewPlayer", PhotonNetwork.LocalPlayer);
+            }
+        }
+    }
 
 
     private void RaiseFarmerEvent(int actorNumber)

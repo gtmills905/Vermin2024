@@ -366,7 +366,7 @@ namespace Demo.Scripts.Runtime.Character
                 if (hit.collider.gameObject.CompareTag("Player"))
                 {
                     PhotonNetwork.Instantiate(playerHitImpact.name, hit.point, Quaternion.identity);
-                    hit.collider.gameObject.GetPhotonView().RPC("DealDamage", RpcTarget.All, photonView.Owner.NickName, shotDamage);
+                    hit.collider.gameObject.GetPhotonView().RPC("DealDamage", RpcTarget.All, photonView.Owner.NickName, shotDamage,PhotonNetwork.LocalPlayer.ActorNumber);
                 }
                 else
                 {

@@ -3,7 +3,6 @@
 using KINEMATION.FPSAnimationFramework.Runtime.Core;
 using KINEMATION.KAnimationCore.Runtime.Attributes;
 using KINEMATION.KAnimationCore.Runtime.Input;
-
 using UnityEngine;
 
 using UnityEngine.Animations;
@@ -61,7 +60,7 @@ namespace KINEMATION.FPSAnimationFramework.Runtime.Playables
         protected virtual void Update()
         {
             if (!Application.isPlaying) return;
-            
+
             _overlayPoseMixer.Update();
             _slotMixer.Update();
             _overrideMixer.Update();
@@ -71,9 +70,18 @@ namespace KINEMATION.FPSAnimationFramework.Runtime.Playables
             {
                 weight *= Mathf.Clamp01(_inputController.GetValue<float>(_playablesWeightPropertyIndex));
             }
-            
-            _masterMixer.SetInputWeight(1, Mathf.Clamp01(weight));
+
+            // Check if _masterMixer is valid and has the necessary inputs
+            if (_masterMixer.IsValid() && _masterMixer.GetInputCount() > 1)
+            {
+                _masterMixer.SetInputWeight(1, Mathf.Clamp01(weight));
+            }
+            else
+            {
+                Debug.LogWarning($"_masterMixer is invalid or does not have enough inputs. InputCount: {_masterMixer.GetInputCount()}");
+            }
         }
+
 
         private void OnDestroy()
         {

@@ -1,6 +1,8 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
+using Photon.Pun; // For PUN 2
+using Photon.Realtime; // Optional for room/lobby management
 
 
 public class GameManager : MonoBehaviour
@@ -47,60 +49,24 @@ public class GameManager : MonoBehaviour
         timer -= Time.deltaTime;
         UpdateTimerText();
         UpdateScoreText();
-        if(birdScore == 10)
-        {
-            SceneManager.LoadScene("Birds Win");
-        }
-        if(BirdLives == 10)
-        {
-            SceneManager.LoadScene("Farmer Win");
-        }
 
-
-        // Update timer
-        if (timer <= 0f)
+        // Send updated scores to MatchManager via Photon
+        if (PhotonNetwork.IsConnected && PhotonNetwork.InRoom)
         {
-            // Check if birdScore and BirdLives are complementary out of 10
-            if (birdScore + BirdLives == 10 || birdScore + BirdLives == 0)
-            {
-                SceneManager.LoadScene("Tie");
-            }
-            else
-            {
-                // If timer runs out (5 minutes elapsed), determine the winner
-                if (birdScore > BirdLives)
-                {
-                    SceneManager.LoadScene("Birds Win 1");
-                    // You can add more logic here, such as displaying a win screen or triggering other game events.
-                }
-                else if (BirdLives > birdScore)
-                {
-                    SceneManager.LoadScene("Farmer Win 1");
-                    // You can add more logic here, such as displaying a win screen or triggering other game events.
-                }
-                else if (BirdLives <= 0)
-                {
-                    SceneManager.LoadScene("Farmer Win 1");
-                    // You can add more logic here, such as displaying a win screen or triggering other game events.
-                }
-                else
-                {
-                    SceneManager.LoadScene("Tie 1");
-                    // You can add more logic here, such as displaying a win screen or triggering other game events.
-                }
-            }
+            MatchManager.Instance.UpdateStatsSend(PhotonNetwork.LocalPlayer.ActorNumber, 0, birdScore); // Bird score as kills
+            MatchManager.Instance.UpdateStatsSend(PhotonNetwork.LocalPlayer.ActorNumber, 1, BirdLives); // Farmer score as deaths
         }
 
-
+        
     }
 
     // Call this method when a bird deposits an object
     public void DepositObject(int points)
     {
         birdScore += points;
+        MatchManager.Instance.UpdateDepositsSend(PhotonNetwork.LocalPlayer.ActorNumber, 1);
         UpdateScoreText();
     }
-
 
     // Call this method when the farmer kills a bird
     public void FarmerKill(int points)
@@ -108,8 +74,6 @@ public class GameManager : MonoBehaviour
         BirdLives += points;  // Increment Farmer's score or kills
         UpdateScoreText();  // Update the UI with the new score
     }
-
-
 
     void UpdateScoreText()
     {
@@ -124,6 +88,7 @@ public class GameManager : MonoBehaviour
 
         timerText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
     }
+
     public int GetNumPlayers()
     {
         return 4;

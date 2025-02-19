@@ -208,13 +208,13 @@ public class BirdMovement : MonoBehaviourPunCallbacks
     }
 
     [PunRPC]
-    public void DealDamage(string damager, int damageAmount)
+    public void DealDamage(string damager, int damageAmount, int actor)
     {
-        TakeDamage(damager, damageAmount);
+        TakeDamage(damager, damageAmount,actor);
     }
 
     [PunRPC]
-    public void TakeDamage(string damager, int damageAmount)
+    public void TakeDamage(string damager, int damageAmount, int actor)
     {
         if (!photonView.IsMine) return; // Only process damage for the local player
 
@@ -231,6 +231,7 @@ public class BirdMovement : MonoBehaviourPunCallbacks
         {
             currentHealth = 0;
             photonView.RPC("Die", RpcTarget.All, damager);
+            MatchManager.Instance.UpdateStatsSend(actor, 0, 1);
         }
     }
 
@@ -239,6 +240,7 @@ public class BirdMovement : MonoBehaviourPunCallbacks
     [PunRPC]
     public void Die(string damager)
     {
+        MatchManager.Instance.UpdateStatsSend(PhotonNetwork.LocalPlayer.ActorNumber, 1, 1);
         // Notify GameManager that the farmer killed the bird
         GameManager.Instance.FarmerKill(1); // Update kill count for the farmer (the one who killed the bird)
 
@@ -291,6 +293,8 @@ public class BirdMovement : MonoBehaviourPunCallbacks
 
         // Destroy the player object (dying player only)
         PhotonNetwork.Destroy(gameObject);
+        PhotonNetwork.RemoveRPCs(GetComponent<PhotonView>());  // Clear any queued RPCs for this object
+
     }
 
 

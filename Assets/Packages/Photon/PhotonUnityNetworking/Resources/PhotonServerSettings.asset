@@ -58,6 +58,8 @@ MonoBehaviour:
   - RPC_PlayGunshotSound
   - DestroyAttachedPig
   - InstantiatePig
+  - RPC_SpawnFarmerForNewPlayer
+  - RPC_SpawnPlayerForNewPlayer
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0
