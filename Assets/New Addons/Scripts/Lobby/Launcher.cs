@@ -53,11 +53,17 @@ public class Launcher : MonoBehaviourPunCallbacks
 
     void Start()
     {
+        PhotonNetwork.ConnectUsingSettings();
         CloseMenus();
+        if (!PhotonNetwork.IsConnected)
+        {
+            Debug.Log("Reconnecting...");
+            PhotonNetwork.ConnectUsingSettings();
+        }
         PhotonNetwork.NetworkingClient.LoadBalancingPeer.DisconnectTimeout = 10000; // 10 seconds
         PhotonNetwork.SendRate = 30;
         PhotonNetwork.SerializationRate = 15;
-        PhotonNetwork.PhotonServerSettings.AppSettings.FixedRegion = "";
+        
         
 
 
@@ -65,11 +71,7 @@ public class Launcher : MonoBehaviourPunCallbacks
         loadingText.text = "Connecting to Network...";
 
 
-        if (!PhotonNetwork.IsConnected)
-        {
-            Debug.Log("Reconnecting...");
-            PhotonNetwork.ConnectUsingSettings();
-        }
+        
 
     }
 
@@ -81,15 +83,6 @@ public class Launcher : MonoBehaviourPunCallbacks
         loadingText.text = "Joining Lobby...";
     }
 
-    public void OnEnable()
-    {
-        SceneManager.sceneLoaded += OnSceneLoaded;
-    }
-
-    public void OnDisable()
-    {
-        SceneManager.sceneLoaded -= OnSceneLoaded;
-    }
 
     public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
@@ -396,11 +389,15 @@ public class Launcher : MonoBehaviourPunCallbacks
             }
         }
     }
-    Dictionary<int, bool> readyPlayers = new Dictionary<int, bool>();
+
+    public GameObject readyButton;
+    public TMP_Text readyButtonText;
+    private Dictionary<int, bool> readyPlayers = new Dictionary<int, bool>();
+
 
     public void ToggleReady()
     {
-        bool isReady = !readyPlayers.ContainsKey(PhotonNetwork.LocalPlayer.ActorNumber);
+        bool isReady = !readyPlayers.ContainsKey(PhotonNetwork.LocalPlayer.ActorNumber) || !readyPlayers[PhotonNetwork.LocalPlayer.ActorNumber];
         photonView.RPC("SetPlayerReady", RpcTarget.All, PhotonNetwork.LocalPlayer.ActorNumber, isReady);
     }
 
@@ -408,7 +405,16 @@ public class Launcher : MonoBehaviourPunCallbacks
     void SetPlayerReady(int playerID, bool ready)
     {
         readyPlayers[playerID] = ready;
+        UpdateReadyButton(playerID, ready);
         CheckAllReady();
+    }
+
+    void UpdateReadyButton(int playerID, bool ready)
+    {
+        if (playerID == PhotonNetwork.LocalPlayer.ActorNumber)
+        {
+            readyButtonText.text = ready ? "Ready" : "Not Ready";
+        }
     }
 
     void CheckAllReady()
@@ -418,6 +424,7 @@ public class Launcher : MonoBehaviourPunCallbacks
             StartGame();
         }
     }
+
 
     [PunRPC]
     void NotifyNewFarmer(int farmerID)

@@ -35,12 +35,59 @@ public class PlayerSpawner : MonoBehaviourPunCallbacks
     {
         if (PhotonNetwork.IsConnected && PhotonNetwork.LocalPlayer.IsLocal)
         {
-            // Randomize spawn type: either "Farmer" or something else
-            SpawnRandomPlayer();
+            // Check if we have a farmer assigned, and don't spawn again if it's already handled.
+            int farmerActorNumber = GetFarmerActorNumber();
+            if (farmerActorNumber == 0)
+            {
+                // Spawn as a non-farmer
+                SpawnRandomPlayer();
+            }
+            else
+            {
+                // If already a farmer, don't spawn another farmer
+                SpawnPlayer();
+            }
             PhotonNetwork.AutomaticallySyncScene = true;
-
         }
     }
+
+    public override void OnJoinedRoom()
+    {
+        base.OnJoinedRoom();
+
+        // Avoid spawning again if the role is already assigned
+        int farmerActorNumber = GetFarmerActorNumber();
+        if (PhotonNetwork.LocalPlayer.ActorNumber == farmerActorNumber)
+        {
+            // The local player is the farmer, don't spawn another
+            if (farmer == null)
+            {
+                SpawnFarmer();
+            }
+        }
+        else
+        {
+            // Spawn as regular player
+            if (player == null)
+            {
+                SpawnPlayer();
+            }
+        }
+
+        // Sync existing players with the new joiner
+        foreach (Player player in PhotonNetwork.PlayerListOthers)
+        {
+            if (player.ActorNumber == farmerActorNumber)
+            {
+                photonView.RPC("RPC_SpawnFarmerForNewPlayer", PhotonNetwork.LocalPlayer);
+            }
+            else
+            {
+                photonView.RPC("RPC_SpawnPlayerForNewPlayer", PhotonNetwork.LocalPlayer);
+            }
+        }
+    }
+
 
     private void SpawnRandomPlayer()
     {
@@ -140,37 +187,6 @@ public class PlayerSpawner : MonoBehaviourPunCallbacks
     void RPC_SpawnPlayerForNewPlayer()
     {
         SpawnPlayer();
-    }
-
-
-    public override void OnJoinedRoom()
-    {
-        base.OnJoinedRoom();
-
-        // Spawn yourself based on role
-        int farmerActorNumber = GetFarmerActorNumber();
-
-        if (PhotonNetwork.LocalPlayer.ActorNumber == farmerActorNumber)
-        {
-            SpawnFarmer();
-        }
-        else
-        {
-            SpawnPlayer();
-        }
-
-        // Sync existing players with the new joiner
-        foreach (Player player in PhotonNetwork.PlayerListOthers)
-        {
-            if (player.ActorNumber == farmerActorNumber)
-            {
-                photonView.RPC("RPC_SpawnFarmerForNewPlayer", PhotonNetwork.LocalPlayer);
-            }
-            else
-            {
-                photonView.RPC("RPC_SpawnPlayerForNewPlayer", PhotonNetwork.LocalPlayer);
-            }
-        }
     }
 
 
