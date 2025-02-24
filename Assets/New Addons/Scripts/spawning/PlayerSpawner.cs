@@ -48,29 +48,17 @@ public class PlayerSpawner : MonoBehaviourPunCallbacks
 
         if (farmerActorNumber == 0)
         {
-            // No farmer yet — assign the first player to be the farmer
-            if (PhotonNetwork.IsMasterClient)
-            {
+
                 SetFarmerActorNumber(PhotonNetwork.LocalPlayer.ActorNumber);
                 RaiseFarmerEvent(PhotonNetwork.LocalPlayer.ActorNumber);
                 SpawnFarmer();
-            }
-            else
-            {
-                SpawnPlayer(); // Regular players just spawn as non-farmers
-            }
+
         }
         else
         {
-            // A farmer is already assigned, so just spawn as a regular player
-            if (PhotonNetwork.LocalPlayer.ActorNumber == farmerActorNumber)
-            {
-                SpawnFarmer();
-            }
-            else
-            {
+
                 SpawnPlayer();
-            }
+            
         }
     }
 

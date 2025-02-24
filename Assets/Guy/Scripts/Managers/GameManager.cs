@@ -5,7 +5,7 @@ using Photon.Pun; // For PUN 2
 using Photon.Realtime; // Optional for room/lobby management
 
 
-public class GameManager : MonoBehaviour
+public class GameManager : MonoBehaviourPunCallbacks
 {
     public static GameManager Instance; // Static instance field
 
