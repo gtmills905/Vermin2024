@@ -54,20 +54,23 @@ public class Launcher : MonoBehaviourPunCallbacks
     void Start()
     {
         CloseMenus();
+        PhotonNetwork.NetworkingClient.LoadBalancingPeer.DisconnectTimeout = 10000; // 10 seconds
+        PhotonNetwork.SendRate = 30;
+        PhotonNetwork.SerializationRate = 15;
+        PhotonNetwork.PhotonServerSettings.AppSettings.FixedRegion = "";
+        
+
 
         loadingScreen.SetActive(true);
         loadingText.text = "Connecting to Network...";
 
-        // Check if the Photon Network is already connected
-        if (PhotonNetwork.IsConnected)
+
+        if (!PhotonNetwork.IsConnected)
         {
-            Debug.Log("Already connected to Photon.");
+            Debug.Log("Reconnecting...");
+            PhotonNetwork.ConnectUsingSettings();
         }
-        else
-        {
-            Debug.Log("Connecting to Photon...");
-            PhotonNetwork.ConnectUsingSettings();  // Connect to Photon if not already connected
-        }
+
     }
 
     public override void OnConnectedToMaster()
