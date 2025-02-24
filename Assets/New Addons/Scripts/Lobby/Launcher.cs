@@ -53,10 +53,7 @@ public class Launcher : MonoBehaviourPunCallbacks
 
     void Start()
     {
-
-
         CloseMenus();
-
 
         loadingScreen.SetActive(true);
         loadingText.text = "Connecting to Network...";
@@ -72,6 +69,15 @@ public class Launcher : MonoBehaviourPunCallbacks
             PhotonNetwork.ConnectUsingSettings();  // Connect to Photon if not already connected
         }
     }
+
+    public override void OnConnectedToMaster()
+    {
+        Debug.Log("Successfully connected to Photon Master Server.");
+        PhotonNetwork.JoinLobby();
+        PhotonNetwork.AutomaticallySyncScene = true;
+        loadingText.text = "Joining Lobby...";
+    }
+
     public void OnEnable()
     {
         SceneManager.sceneLoaded += OnSceneLoaded;
@@ -103,14 +109,6 @@ public class Launcher : MonoBehaviourPunCallbacks
             title.SetActive(false);
         }
 
-    }
-
-    public override void OnConnectedToMaster()
-    {
-        PhotonNetwork.JoinLobby();
-
-        PhotonNetwork.AutomaticallySyncScene = true;
-        loadingText.text = "Joining Lobby...";
     }
 
     public override void OnJoinedLobby()
