@@ -6,10 +6,14 @@ using Microsoft.Win32.SafeHandles;
 using System.Security.Permissions;
 using System.Collections.Generic;
 using System.Runtime.ExceptionServices;
+using UnityEngine.SceneManagement;
+
 
 public class Launcher : MonoBehaviourPunCallbacks
 {
     public static Launcher instance;
+
+    public static GameManager Instance;
 
     public GameObject loadingScreen;
     public TMP_Text loadingText;
@@ -49,6 +53,8 @@ public class Launcher : MonoBehaviourPunCallbacks
 
     void Start()
     {
+
+
         CloseMenus();
 
 
@@ -66,8 +72,23 @@ public class Launcher : MonoBehaviourPunCallbacks
             PhotonNetwork.ConnectUsingSettings();  // Connect to Photon if not already connected
         }
     }
+    public void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
 
-        void CloseMenus()
+    public void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        GameManager.Instance = FindObjectOfType<GameManager>();
+    }
+
+
+    void CloseMenus()
     {
         if (loadingScreen) loadingScreen.SetActive(false);
         if (menuButtons) menuButtons.SetActive(false);
@@ -138,7 +159,8 @@ public class Launcher : MonoBehaviourPunCallbacks
     {
         CloseMenus();
         roomScreen.SetActive(true);
-        roomNameText.text = PhotonNetwork.CurrentRoom.Name;
+        roomNameText.text = PhotonNetwork.CurrentRoom.Name + " (" + PhotonNetwork.CurrentRoom.PlayerCount + "/" + PhotonNetwork.CurrentRoom.MaxPlayers + ")";
+
 
         ListAllPlayers();
 
@@ -176,13 +198,43 @@ public class Launcher : MonoBehaviourPunCallbacks
         newPlayerLabel.text = newPlayer.NickName;
         newPlayerLabel.gameObject.SetActive(true);
 
+        // Update room information UI
+        roomNameText.text = PhotonNetwork.CurrentRoom.Name + " (" + PhotonNetwork.CurrentRoom.PlayerCount + "/" + PhotonNetwork.CurrentRoom.MaxPlayers + ")";
+
+        // Pass the player's ActorNumber (int) instead of the whole Player object
+        photonView.RPC("UpdateScoreUI", RpcTarget.All, newPlayer.ActorNumber, GameManager.Instance.BirdLives, GameManager.Instance.birdScore);
+
         allPlayerNames.Add(newPlayerLabel);
     }
+
+    [PunRPC]
+    void UpdateScoreUI(int playerID, int BirdLives, int birdScore)
+    {
+        // Update the score for the player based on the playerID (int) passed from the RPC
+        GameManager.Instance.UpdateScoreText(playerID, BirdLives, birdScore);
+    }
+
+
     public override void OnPlayerLeftRoom(Player otherPlayer)
     {
         ListAllPlayers();
+        roomNameText.text = PhotonNetwork.CurrentRoom.Name + " (" + PhotonNetwork.CurrentRoom.PlayerCount + "/" + PhotonNetwork.CurrentRoom.MaxPlayers + ")";
+
+        // Destroy player character
+        GameObject playerObj = GameManager.Instance.GetPlayerObject(otherPlayer.ActorNumber); // Pass ActorNumber (int) instead of Player object
+        if (playerObj)
+            PhotonNetwork.Destroy(playerObj);
+
+        // Destroy any held pig
+        GameObject heldPig = GameManager.Instance.GetPlayerPig(otherPlayer.ActorNumber); // Pass ActorNumber (int) instead of Player object
+        if (heldPig)
+            PhotonNetwork.Destroy(heldPig);
+
+        // Reassign farmer if needed
+        CheckFarmerStatus();
     }
-    
+
+
 
     public override void OnCreateRoomFailed(short returnCode, string message)
     {
@@ -314,18 +366,96 @@ public class Launcher : MonoBehaviourPunCallbacks
             startButton.SetActive(false);
         }
     }
-    
-    public void StartGame()
+    void AssignRoles()
     {
-        if (PhotonNetwork.IsMasterClient)
+        if (PhotonNetwork.CurrentRoom.PlayerCount == 1)
         {
-            
-            CloseMenus(); // Close the menu for the master client
-            PhotonNetwork.LoadLevel(levelToPlay); // Load the game level
-            photonView.RPC("CloseMenusForAll", RpcTarget.All); // Close menus for all clients
-            
+            GameManager.Instance.SetRole(PhotonNetwork.LocalPlayer, "Farmer");
+        }
+        else
+        {
+            GameManager.Instance.SetRole(PhotonNetwork.LocalPlayer, "Bird");
         }
     }
+    void CheckFarmerStatus()
+    {
+        Player[] players = PhotonNetwork.PlayerList;
+
+        if (!GameManager.Instance.IsFarmerPresent())
+        {
+            if (players.Length <= 2)
+            {
+                GameManager.Instance.EndGame();
+            }
+            else
+            {
+                Player newFarmer = players[Random.Range(0, players.Length)];
+                GameManager.Instance.SetRole(newFarmer, "Farmer");
+                photonView.RPC("NotifyNewFarmer", RpcTarget.All, newFarmer.ActorNumber);
+            }
+        }
+    }
+    Dictionary<int, bool> readyPlayers = new Dictionary<int, bool>();
+
+    public void ToggleReady()
+    {
+        bool isReady = !readyPlayers.ContainsKey(PhotonNetwork.LocalPlayer.ActorNumber);
+        photonView.RPC("SetPlayerReady", RpcTarget.All, PhotonNetwork.LocalPlayer.ActorNumber, isReady);
+    }
+
+    [PunRPC]
+    void SetPlayerReady(int playerID, bool ready)
+    {
+        readyPlayers[playerID] = ready;
+        CheckAllReady();
+    }
+
+    void CheckAllReady()
+    {
+        if (readyPlayers.Count == PhotonNetwork.CurrentRoom.PlayerCount && !readyPlayers.ContainsValue(false))
+        {
+            StartGame();
+        }
+    }
+
+    [PunRPC]
+    void NotifyNewFarmer(int farmerID)
+    {
+        Player farmer = PhotonNetwork.CurrentRoom.GetPlayer(farmerID);
+        if (farmer != null)
+        {
+            Debug.Log(farmer.NickName + " is now the farmer.");
+        }
+    }
+
+
+    public void StartGame()
+    {
+        if (PhotonNetwork.IsMasterClient && PhotonNetwork.CurrentRoom.PlayerCount >= 2)
+        {
+            CloseMenus();
+            PhotonNetwork.LoadLevel(levelToPlay);
+            photonView.RPC("CloseMenusForAll", RpcTarget.All);
+        }
+        else
+        {
+            Debug.Log("Not enough players to start the game.");
+        }
+    }
+    public static Player GetPlayerByID(int playerID)
+    {
+        // Assuming you have a list of all players, you can search for the player with the given ID
+        foreach (var player in PhotonNetwork.PlayerList)
+        {
+            if (player.ActorNumber == playerID)
+            {
+                return player;
+            }
+        }
+
+        return null;  // If no player is found with the given ID
+    }
+
 
     [PunRPC]
     public void CloseMenusForAll()

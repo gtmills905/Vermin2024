@@ -68,25 +68,21 @@ public class MatchManager : MonoBehaviourPunCallbacks, IOnEventCallback
     {
         if (gameManager == null) return;
 
-        if (gameManager.birdScore == 10)
+        if (gameManager.birdScore >= killsToWin) // Birds win if they score enough
         {
             PhotonNetwork.LoadLevel("Birds Win 1");
         }
-        else if (gameManager.BirdLives == 10)
+        else if (gameManager.BirdLives >= killsToWin) // Farmers win by eliminating enough birds
         {
             PhotonNetwork.LoadLevel("Farmer Win 1");
         }
-        else if (gameManager.timer <= 0f)
+        else if (gameManager.timer <= 0f) // Time runs out
         {
-            if (gameManager.birdScore + gameManager.BirdLives == 10 || gameManager.birdScore + gameManager.BirdLives == 0)
-            {
-                PhotonNetwork.LoadLevel("Tie 1");
-            }
-            else if (gameManager.birdScore > gameManager.BirdLives)
+            if (gameManager.birdScore > gameManager.BirdLives)
             {
                 PhotonNetwork.LoadLevel("Birds Win 1");
             }
-            else if (gameManager.BirdLives > gameManager.birdScore || gameManager.BirdLives <= 0)
+            else if (gameManager.BirdLives > gameManager.birdScore)
             {
                 PhotonNetwork.LoadLevel("Farmer Win 1");
             }
@@ -108,32 +104,20 @@ public class MatchManager : MonoBehaviourPunCallbacks, IOnEventCallback
                 switch (theEvent)
                 {
                     case EventCodes.NewPlayer:
-
-                            NewPlayerReceive(new object[] { hashtable }); // Wrap the hashtable in an object array
-
+                        NewPlayerReceive(new object[] { hashtable }); // Wrap the hashtable in an object array
                         break;
                     case EventCodes.ListPlayers:
-
-                            ListPlayersReceive(new object[] { hashtable }); // Wrap the hashtable in an object array
-
+                        ListPlayersReceive(new object[] { hashtable }); // Wrap the hashtable in an object array
                         break;
                     case EventCodes.UpdateStats:
-
-                            UpdateStatsReceive(new object[] { hashtable }); // Wrap the hashtable in an object array
-
+                        UpdateStatsReceive(new object[] { hashtable }); // Wrap the hashtable in an object array
                         break;
                     default:
                         break;
                 }
             }
         }
-
     }
-
-
-
-
-
 
     public override void OnEnable()
     {
@@ -145,6 +129,63 @@ public class MatchManager : MonoBehaviourPunCallbacks, IOnEventCallback
         PhotonNetwork.RemoveCallbackTarget(this);
     }
 
+    // Add a method to handle the assignment of roles dynamically, perhaps based on the game state or player count.
+    public void AssignRoleToPlayer(PlayerInfo player)
+    {
+        int farmerCount = 0;
+        int birdCount = 0;
+
+        // Count how many players have each role
+        foreach (var p in allPlayers)
+        {
+            if (p.Role == "Farmer") farmerCount++;
+            if (p.Role == "Bird") birdCount++;
+        }
+
+        // Assign roles based on available spots
+        if (farmerCount < 1) // For example, max 1 farmer
+        {
+            player.Role = "Farmer";
+        }
+        else if (birdCount < 4) // For example, max 4 birds
+        {
+            player.Role = "Bird";
+        }
+        else
+        {
+            // Default to "Spectator" if no roles available
+            player.Role = "Spectator";
+        }
+    }
+
+    // Update the NewPlayerReceive to include role assignment
+    public void NewPlayerReceive(object[] dataReceived)
+    {
+        if (dataReceived == null || dataReceived.Length != 4)
+        {
+            Debug.LogError("NewPlayerReceive: Invalid data format.");
+            return;
+        }
+
+        string username = (string)dataReceived[0];
+        int actorNumber = (int)dataReceived[1];
+        int kills = (int)dataReceived[2];
+        int deaths = (int)dataReceived[3];
+
+        // Create a new PlayerInfo object with received data
+        PlayerInfo newPlayer = new PlayerInfo(username, actorNumber, kills, deaths, 0, ""); // Role will be assigned later
+
+        // Assign a role
+        AssignRoleToPlayer(newPlayer);
+
+        // Add the player to the list
+        allPlayers.Add(newPlayer);
+
+        // Log the new player's info
+        Debug.Log($"New player added: {username} (Actor: {actorNumber}, Kills: {kills}, Deaths: {deaths}, Role: {newPlayer.Role})");
+    }
+
+    // Modify NewPlayerSend to handle role sending
     public void NewPlayerSend(string username)
     {
         object[] package = new object[4];
@@ -160,30 +201,6 @@ public class MatchManager : MonoBehaviourPunCallbacks, IOnEventCallback
             new SendOptions { Reliability = true }
         );
     }
-
-    public void NewPlayerReceive(object[] dataReceived)
-    {
-        if (dataReceived == null || dataReceived.Length != 4)
-        {
-            Debug.LogError("NewPlayerReceive: Invalid data format.");
-            return;
-        }
-
-        string username = (string)dataReceived[0];
-        int actorNumber = (int)dataReceived[1];
-        int kills = (int)dataReceived[2];
-        int deaths = (int)dataReceived[3];
-
-        // Add the new player to the list
-        PlayerInfo newPlayer = new PlayerInfo(username, actorNumber, kills, deaths, 0); // Deposits initialized to 0
-        allPlayers.Add(newPlayer);
-
-        // Log the new player's info
-        Debug.Log($"New player added: {username} (Actor: {actorNumber}, Kills: {kills}, Deaths: {deaths})");
-
-        // You can add additional logic here, such as updating the UI or notifying other players
-    }
-
 
     public void ListPlayersSend()
     {
@@ -211,8 +228,6 @@ public class MatchManager : MonoBehaviourPunCallbacks, IOnEventCallback
         );
     }
 
-
-
     public void ListPlayersReceive(object[] dataReceived)
     {
         if (dataReceived == null || dataReceived.Length == 0)
@@ -228,9 +243,9 @@ public class MatchManager : MonoBehaviourPunCallbacks, IOnEventCallback
         for (int i = 1; i < dataReceived.Length; i++)
         {
             object[] piece = dataReceived[i] as object[];
-            if (piece == null || piece.Length != 4)
+            if (piece == null || piece.Length != 5) // Adjusted to check for the correct number of elements (5)
             {
-                Debug.LogError($"Invalid data format at index {i}: Expected object[] of length 4.");
+                Debug.LogError($"Invalid data format at index {i}: Expected object[] of length 5.");
                 continue;
             }
 
@@ -239,10 +254,9 @@ public class MatchManager : MonoBehaviourPunCallbacks, IOnEventCallback
                     (int)piece[1],
                     (int)piece[2],
                     (int)piece[3],
-                     (int)piece[4]
+                    (int)piece[4],
+                    "" // Role will be set after receiving list
                                  );
-
-            
 
             allPlayers.Add(player);
             if (PhotonNetwork.LocalPlayer.ActorNumber == player.actor)
@@ -286,8 +300,6 @@ public class MatchManager : MonoBehaviourPunCallbacks, IOnEventCallback
         }
     }
 
-
-
     public void UpdateStatsSend(int actorSending, int statToUpdate, int amountToChange)
     {
         object[] package = new object[] { actorSending, statToUpdate, amountToChange };
@@ -310,27 +322,30 @@ public class MatchManager : MonoBehaviourPunCallbacks, IOnEventCallback
     public void UpdateStatsReceive(object[] dataReceived)
     {
         int actor = (int)dataReceived[0];
-        StatType statType = (StatType)(int)dataReceived[1]; // Cast stat type to enum
+        StatType statType = (StatType)(int)dataReceived[1];
         int amount = (int)dataReceived[2];
 
-        for (int i = 0; i < allPlayers.Count; i++)
+        foreach (var player in allPlayers)
         {
-            if (allPlayers[i].actor == actor)
+            if (player.actor == actor)
             {
                 switch (statType)
                 {
                     case StatType.Kills:
-                        allPlayers[i].kills += amount;
+                        player.kills += amount;
                         break;
                     case StatType.Deaths:
-                        allPlayers[i].deaths += amount;
+                        player.deaths += amount;
                         break;
-                        // Add new cases for additional stats
+                    case StatType.Deposits:
+                        player.deposits += amount;
+                        break;
                 }
                 break;
             }
         }
-        ScoreCheck(); // Check for winners after stats update
+
+        ScoreCheck();
     }
 
     public override void OnLeftRoom()
@@ -338,6 +353,7 @@ public class MatchManager : MonoBehaviourPunCallbacks, IOnEventCallback
         base.OnLeftRoom();
         SceneManager.LoadScene("Vermin Menu");
     }
+
     void ScoreCheck()
     {
         bool winnerFound = false;
@@ -357,7 +373,56 @@ public class MatchManager : MonoBehaviourPunCallbacks, IOnEventCallback
         }
     }
 
-    void EndGame()
+    public GameObject GetPlayerObjectByID(int playerID)
+    {
+        // Assuming MatchManager has a list of players and player IDs are tied to actor numbers
+        PlayerInfo playerInfo = MatchManager.Instance.allPlayers.Find(player => player.actor == playerID);
+
+        if (playerInfo != null)
+        {
+            // Assuming you have a method to retrieve player objects by actor number (or use some identifier)
+            GameObject playerObject = PhotonNetwork.Instantiate("PlayerPrefab", Vector3.zero, Quaternion.identity); // Example, adjust according to your setup
+
+            return playerObject;
+        }
+        else
+        {
+            Debug.LogWarning("Player with ID " + playerID + " not found.");
+            return null;
+        }
+    }
+
+    // Dictionary to store player information by actor ID
+    private Dictionary<int, PlayerInfo> playerInfos = new Dictionary<int, PlayerInfo>();
+
+    // Method to add PlayerInfo
+    public void AddPlayerInfo(string playerName, int actorNumber, int kills, int deaths, int deposits, string role)
+    {
+        PlayerInfo newPlayerInfo = new PlayerInfo(playerName, actorNumber, kills, deaths, deposits, role);
+
+        if (!playerInfos.ContainsKey(actorNumber))
+        {
+            playerInfos.Add(actorNumber, newPlayerInfo);
+        }
+        else
+        {
+            // Update existing player info if necessary
+            playerInfos[actorNumber] = newPlayerInfo;
+        }
+    }
+
+
+    // Method to retrieve PlayerInfo based on actor number
+    public PlayerInfo GetPlayerInfo(int actorNumber)
+    {
+        if (playerInfos.ContainsKey(actorNumber))
+        {
+            return playerInfos[actorNumber];
+        }
+        return null; // Return null if player info doesn't exist
+    }
+
+    public void EndGame()
     {
         state = GameState.Ending; // Set game state to ending
         if (PhotonNetwork.IsMasterClient)
@@ -393,17 +458,18 @@ public class PlayerInfo
     public int actor;
     public int kills;
     public int deaths;
-    public int deposits; // New field to track deposits
+    public int deposits;
+    public string Role;  // Add Role as a field
 
-
-    public PlayerInfo(string _name, int _actor, int _kills, int _deaths, int _deposits)
+    public PlayerInfo(string _name, int _actor, int _kills, int _deaths, int _deposits, string _role)
     {
         name = _name;
         actor = _actor;
         kills = _kills;
         deaths = _deaths;
         deposits = _deposits;
+        Role = _role;  // Initialize the Role property
     }
-
 }
+
 
