@@ -1,26 +1,17 @@
 using UnityEngine;
 using Photon.Pun;
 using TMPro;
-using UnityEngine.UI; // Ensure you have this at the top
 using Photon.Realtime;
 using Microsoft.Win32.SafeHandles;
 using System.Security.Permissions;
 using System.Collections.Generic;
 using System.Runtime.ExceptionServices;
 using UnityEngine.SceneManagement;
-using System.Linq;
-using ExitGames.Client.Photon;
-
 
 
 public class Launcher : MonoBehaviourPunCallbacks
 {
     public static Launcher instance;
-
-
-    public GameObject readyButtonPrefab;  // Drag your ready button prefab here in the inspector
-    public Transform parentTransform;     // The GameObject or Canvas where you want to parent the button
-
 
     public static GameManager Instance;
 
@@ -50,12 +41,6 @@ public class Launcher : MonoBehaviourPunCallbacks
 
     public string levelToPlay;
 
-    public GameObject readyButton;
-    public TMP_Text readyButtonText;
-    // Replace the old dictionary with this one
-    private Dictionary<int, ReadyPlayerData> readyPlayers = new Dictionary<int, ReadyPlayerData>();
-
-
     private void Awake()
     {
         if (instance != null && instance != this)
@@ -78,12 +63,15 @@ public class Launcher : MonoBehaviourPunCallbacks
         PhotonNetwork.NetworkingClient.LoadBalancingPeer.DisconnectTimeout = 10000; // 10 seconds
         PhotonNetwork.SendRate = 30;
         PhotonNetwork.SerializationRate = 15;
+        
+        
 
 
         loadingScreen.SetActive(true);
         loadingText.text = "Connecting to Network...";
 
 
+        
 
     }
 
@@ -166,12 +154,11 @@ public class Launcher : MonoBehaviourPunCallbacks
         CloseMenus();
         roomScreen.SetActive(true);
         roomNameText.text = PhotonNetwork.CurrentRoom.Name + " (" + PhotonNetwork.CurrentRoom.PlayerCount + "/" + PhotonNetwork.CurrentRoom.MaxPlayers + ")";
-        readyButton.SetActive(true);
-        
+
 
         ListAllPlayers();
 
-        if (PhotonNetwork.IsMasterClient && readyPlayers.Count == PhotonNetwork.CurrentRoom.PlayerCount && !readyPlayers.ContainsValue(false))
+        if (PhotonNetwork.IsMasterClient)
         {
             startButton.SetActive(true);
         }
@@ -182,85 +169,64 @@ public class Launcher : MonoBehaviourPunCallbacks
     }
     private void ListAllPlayers()
     {
-        // Destroy all old player name labels from the list
-        foreach (TMP_Text player in allPlayerNames)
+        foreach(TMP_Text player in allPlayerNames)
         {
             Destroy(player.gameObject);
         }
         allPlayerNames.Clear();
 
-        // Loop through the current list of players and create a new label for each
         Player[] players = PhotonNetwork.PlayerList;
-        for (int i = 0; i < players.Length; i++)
+
+        for(int i = 0; i < players.Length; i++)
         {
             TMP_Text newPlayerLabel = Instantiate(playerNameLabel, playerNameLabel.transform.parent);
             newPlayerLabel.text = players[i].NickName;
-
             newPlayerLabel.gameObject.SetActive(true);
+            
             allPlayerNames.Add(newPlayerLabel);
         }
     }
-
-
-    public override void OnLeftRoom()
-    {
-        CloseMenus();
-        menuButtons.SetActive(true);
-        title.SetActive(true);
-    }
-
-
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
-        // Instantiate the ready button with the player's name
-        GameObject newReadyButton = Instantiate(readyButtonPrefab, parentTransform);
-        TextMeshProUGUI buttonText = newReadyButton.GetComponentInChildren<TextMeshProUGUI>();
-        buttonText.text = newPlayer.NickName;
-
-        // Store the button and ready state in the dictionary
-        readyPlayers[newPlayer.ActorNumber] = new ReadyPlayerData(newReadyButton);
+        TMP_Text newPlayerLabel = Instantiate(playerNameLabel, playerNameLabel.transform.parent);
+        newPlayerLabel.text = newPlayer.NickName;
+        newPlayerLabel.gameObject.SetActive(true);
 
         // Update room information UI
         roomNameText.text = PhotonNetwork.CurrentRoom.Name + " (" + PhotonNetwork.CurrentRoom.PlayerCount + "/" + PhotonNetwork.CurrentRoom.MaxPlayers + ")";
 
-        // Check if the start button should be visible
-        CheckAllReady();
+        // Pass the player's ActorNumber (int) instead of the whole Player object
+        photonView.RPC("UpdateScoreUI", RpcTarget.All, newPlayer.ActorNumber, GameManager.Instance.BirdLives, GameManager.Instance.birdScore);
+
+        allPlayerNames.Add(newPlayerLabel);
     }
+
+    [PunRPC]
+    void UpdateScoreUI(int playerID, int BirdLives, int birdScore)
+    {
+        // Update the score for the player based on the playerID (int) passed from the RPC
+        GameManager.Instance.UpdateScoreText(playerID, BirdLives, birdScore);
+    }
+
 
     public override void OnPlayerLeftRoom(Player otherPlayer)
     {
-        // Remove the ready button when a player leaves
-        if (readyPlayers.ContainsKey(otherPlayer.ActorNumber))
-        {
-            ReadyPlayerData playerData = readyPlayers[otherPlayer.ActorNumber];
-            Destroy(playerData.readyButton); // Destroy the button associated with the player
-            readyPlayers.Remove(otherPlayer.ActorNumber); // Remove from dictionary
-        }
-
-        // Refresh the list of players in the room UI
         ListAllPlayers();
-
-        // Update room info
         roomNameText.text = PhotonNetwork.CurrentRoom.Name + " (" + PhotonNetwork.CurrentRoom.PlayerCount + "/" + PhotonNetwork.CurrentRoom.MaxPlayers + ")";
 
-        // Handle ready button state for all players
-        CheckAllReady();
+        // Destroy player character
+        GameObject playerObj = GameManager.Instance.GetPlayerObject(otherPlayer.ActorNumber); // Pass ActorNumber (int) instead of Player object
+        if (playerObj)
+            PhotonNetwork.Destroy(playerObj);
+
+        // Destroy any held pig
+        GameObject heldPig = GameManager.Instance.GetPlayerPig(otherPlayer.ActorNumber); // Pass ActorNumber (int) instead of Player object
+        if (heldPig)
+            PhotonNetwork.Destroy(heldPig);
+
+        // Reassign farmer if needed
+        CheckFarmerStatus();
     }
-
-
-
-    private void RemovePlayerLabel(Player player)
-    {
-        // Find and remove the player's name label from the UI
-        TMP_Text playerLabel = allPlayerNames.FirstOrDefault(label => label.text == player.NickName);
-        if (playerLabel != null)
-        {
-            allPlayerNames.Remove(playerLabel);
-            Destroy(playerLabel.gameObject); // Clean up the UI label
-        }
-    }
-
-
 
 
 
@@ -292,7 +258,12 @@ public class Launcher : MonoBehaviourPunCallbacks
         loadingScreen.SetActive(true);
         title.SetActive(true);
     }
-
+    public override void OnLeftRoom()
+    {
+        CloseMenus();
+        menuButtons.SetActive(true);
+        title.SetActive(true);
+    }
     public void OpenRoomBrowser()
     {
         CloseMenus();
@@ -380,7 +351,7 @@ public class Launcher : MonoBehaviourPunCallbacks
     }
     public override void OnMasterClientSwitched(Player newMasterClient)
     {
-        if (PhotonNetwork.IsMasterClient && readyPlayers.Count == PhotonNetwork.CurrentRoom.PlayerCount && !readyPlayers.ContainsValue(false))
+        if (PhotonNetwork.IsMasterClient)
         {
             startButton.SetActive(true);
         }
@@ -419,169 +390,40 @@ public class Launcher : MonoBehaviourPunCallbacks
         }
     }
 
+    public GameObject readyButton;
+    public TMP_Text readyButtonText;
+    private Dictionary<int, bool> readyPlayers = new Dictionary<int, bool>();
 
 
     public void ToggleReady()
     {
-        if (photonView.IsMine) // Only the local player can toggle their own readiness
-        {
-            // Create or get the existing ReadyPlayerData object
-            ReadyPlayerData playerData = readyPlayers.ContainsKey(PhotonNetwork.LocalPlayer.ActorNumber)
-                ? readyPlayers[PhotonNetwork.LocalPlayer.ActorNumber]
-                : new ReadyPlayerData();
-
-            // Toggle the readiness status
-            playerData.isReady = !playerData.isReady;
-
-            // Send the readiness update to all clients
-            photonView.RPC("SetPlayerReady", RpcTarget.AllBuffered, PhotonNetwork.LocalPlayer.ActorNumber, playerData);
-        }
+        bool isReady = !readyPlayers.ContainsKey(PhotonNetwork.LocalPlayer.ActorNumber) || !readyPlayers[PhotonNetwork.LocalPlayer.ActorNumber];
+        photonView.RPC("SetPlayerReady", RpcTarget.All, PhotonNetwork.LocalPlayer.ActorNumber, isReady);
     }
-
-
-
 
     [PunRPC]
-    void SetPlayerReady(int playerID, ReadyPlayerData playerData)
+    void SetPlayerReady(int playerID, bool ready)
     {
-        Debug.Log($"SetPlayerReady() called for Player {playerID}, Ready: {playerData.isReady}");
-
-        // Update readiness dictionary
-        if (!readyPlayers.ContainsKey(playerID))
-        {
-            readyPlayers.Add(playerID, playerData);
-        }
-        else
-        {
-            readyPlayers[playerID] = playerData;
-        }
-
-        // Update room properties (optional)
-        Hashtable roomProperties = PhotonNetwork.CurrentRoom.CustomProperties;
-        roomProperties[$"ready_{playerID}"] = playerData.isReady;
-        PhotonNetwork.CurrentRoom.SetCustomProperties(roomProperties);
-
-        // Update UI
-        UpdateReadyButton(playerID, playerData.isReady);
-
-        // Check if all players are ready
+        readyPlayers[playerID] = ready;
+        UpdateReadyButton(playerID, ready);
         CheckAllReady();
     }
-
-
-
-
-
-
 
     void UpdateReadyButton(int playerID, bool ready)
     {
         if (playerID == PhotonNetwork.LocalPlayer.ActorNumber)
         {
-            Button button = readyButton.GetComponent<Button>(); // Get the Button component
-            button.interactable = true; // Local player can interact with their button
-
-            // Ensure the correct TMP reference is used
-            TextMeshProUGUI tmpText = readyButton.GetComponentInChildren<TextMeshProUGUI>();
-            if (tmpText != null)
-            {
-                tmpText.text = ready ? "Ready" : "Not Ready";
-            }
-        }
-        else
-        {
-            GameObject buttonObject = GameObject.Find($"ready status{playerID}");
-            if (buttonObject != null)
-            {
-                Button btn = buttonObject.GetComponent<Button>();
-                TextMeshProUGUI btnText = buttonObject.GetComponentInChildren<TextMeshProUGUI>();
-
-                if (btn != null && btnText != null)
-                {
-                    btnText.text = ready ? "Ready" : "Not Ready";
-                    btn.interactable = false; // Disable interaction for non-local players
-                }
-            }
+            readyButtonText.text = ready ? "Ready" : "Not Ready";
         }
     }
-
-
-
-
 
     void CheckAllReady()
     {
-        Debug.Log($"Checking ready status: {readyPlayers.Count}/{PhotonNetwork.CurrentRoom.PlayerCount}");
-
-        // Ensure dictionary is updated for currently connected players
-        readyPlayers = readyPlayers
-            .Where(kvp => PhotonNetwork.CurrentRoom.Players.ContainsKey(kvp.Key))
-            .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-
-        foreach (var player in readyPlayers)
+        if (readyPlayers.Count == PhotonNetwork.CurrentRoom.PlayerCount && !readyPlayers.ContainsValue(false))
         {
-            Debug.Log($"Player {player.Key} Ready: {player.Value}");
+            StartGame();
         }
     }
-
-
-
-    void InstantiateReadyButton()
-    {
-        if (PhotonNetwork.IsConnected && PhotonNetwork.InRoom)
-        {
-            // Load the prefab from the Resources folder
-            GameObject readyButtonPrefab = Resources.Load<GameObject>("ready status");
-
-            // Debugging to check if prefab is loaded
-            if (readyButtonPrefab != null)
-            {
-                Debug.Log("ReadyButtonPrefab loaded successfully.");
-
-                // Now, instantiate the new object
-                GameObject newReadyButton = Instantiate(readyButtonPrefab, parentTransform);
-
-                PhotonView newPhotonView = newReadyButton.GetComponent<PhotonView>();
-
-                // Allocate a unique ViewID for the new PhotonView
-                PhotonNetwork.AllocateViewID(newPhotonView);
-
-                // Set the button as a child of the specific parent
-                newReadyButton.transform.SetParent(parentTransform, false); // Set to false to maintain world space positioning
-
-                // Optionally, set the button position relative to the parent (UI only)
-                newReadyButton.transform.localPosition = Vector3.zero;  // Adjust position as needed
-
-                // Initialize the button UI (you may want to configure things like text, interaction, etc.)
-                UpdateReadyButton(PhotonNetwork.LocalPlayer.ActorNumber, false); // Example of setting it to "Not Ready" initially
-
-                // Get the Button component from the newly instantiated button
-                Button button = newReadyButton.GetComponent<Button>();
-
-                if (button != null)
-                {
-                    // Assign the ToggleReady method to the button's OnClick event
-                    button.onClick.AddListener(ToggleReady);
-                }
-                else
-                {
-                    Debug.LogError("No Button component found on Ready Button prefab.");
-                }
-            }
-            else
-            {
-                // Log if prefab is not found
-                Debug.LogError("ReadyButtonPrefab not found in Resources/Prefabs.");
-            }
-        }
-        else
-        {
-            Debug.LogError("PhotonNetwork is not connected or not in a room.");
-        }
-    }
-
-
-
 
 
     [PunRPC]
@@ -632,17 +474,4 @@ public class Launcher : MonoBehaviourPunCallbacks
     {
         Application.Quit();
     }
-}
-public class ReadyPlayerData
-{
-    public GameObject readyButton;
-    public bool isReady;
-
-    // Constructor allows specifying the initial readiness state
-    public ReadyPlayerData(GameObject button, bool ready = false)
-    {
-        readyButton = button;
-        isReady = ready;  // Set initial readiness state
-    }
-
 }
